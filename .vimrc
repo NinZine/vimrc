@@ -17,6 +17,12 @@ Bundle 'oplatek/Conque-Shell'
 Bundle 'tpope/vim-fugitive'
 " Bundle 'danchoi/vmail'
 Bundle 'git://repo.or.cz/vcscommand.git'
+Bundle 'jdonaldson/vaxe'
+
+" vaxe
+let g:vaxe_cache_server = 1
+let g:vaxe_cache_server_enable = 1
+set autowrite
 
 if v:version > 703
 	Bundle 'Valloric/YouCompleteMe'
