@@ -18,6 +18,7 @@ Bundle 'tpope/vim-fugitive'
 " Bundle 'danchoi/vmail'
 Bundle 'git://repo.or.cz/vcscommand.git'
 Bundle 'jdonaldson/vaxe'
+Bundle 'godlygeek/csapprox'
 
 " vaxe
 let g:vaxe_cache_server = 1
