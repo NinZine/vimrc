@@ -26,7 +26,9 @@ let g:vaxe_cache_server_enable = 1
 set autowrite
 
 if v:version > 703
-	Bundle 'Valloric/YouCompleteMe'
+	if !has('gui_running')
+		Bundle 'Valloric/YouCompleteMe'
+	end
 	Bundle 'kien/ctrlp.vim'
 
 	let g:ycm_confirm_extra_conf = 0
@@ -38,8 +40,12 @@ if v:version > 703
 	nnoremap <Leader>n :lne<CR>
 	nnoremap <Leader>p :lprevious<CR>
 
+	nnoremap <Leader>t :tabnew<CR>
+	nnoremap <Leader>v :vsp<CR>
+	nnoremap <Leader>s :sp<CR>
+
 	" CtrlP
-	let g:ctrlp_map = '<Leader>t'
+	" let g:ctrlp_map = '<c-p>'
 	let g:ctrlp_show_hidden = 1
 	let g:ctrlp_max_files = 0
 
