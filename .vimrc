@@ -77,11 +77,12 @@ set guioptions=gmrLtT
 "set formatoptions=tcqan
 set formatoptions=clrq
 set shiftwidth=4
-set ignorecase
 set autoindent
 set smartindent
 set nowrap
 set smartcase
+set ignorecase
+set backspace=2
 
 autocmd FileType c set omnifunc=ccomplete#Complete
 "set fuoptions=maxvert,maxhorz
