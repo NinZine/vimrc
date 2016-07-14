@@ -1,35 +1,39 @@
 set nocompatible              " be iMproved
 filetype off                  " required!
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 
 " let Vundle manage Vundle
 " required! 
-Bundle 'gmarik/vundle'
+Plugin 'VundleVim/Vundle.vim'
 
-" Bundles
-Bundle 'scrooloose/syntastic'
-Bundle 'mjbrownie/browser.vim'
-Bundle 'hkrish/vimxcode'
-Bundle 'oplatek/Conque-Shell'
-" Bundle 'tomasr/molokai'
-Bundle 'tpope/vim-fugitive'
-" Bundle 'danchoi/vmail'
-Bundle 'git://repo.or.cz/vcscommand.git'
-Bundle 'jdonaldson/vaxe'
-Bundle 'godlygeek/csapprox'
+" Plugins
+Plugin 'scrooloose/syntastic'
+Plugin 'mjbrownie/browser.vim'
+"Plugin 'hkrish/vimxcode'
+"Plugin 'oplatek/Conque-Shell'
+Plugin 'tomasr/molokai'
+Plugin 'tpope/vim-fugitive'
+" Plugin 'danchoi/vmail'
+"Plugin 'git://repo.or.cz/vcscommand.git'
+"Plugin 'jdonaldson/vaxe'
+"Plugin 'godlygeek/csapprox'
+Plugin 'junegunn/goyo.vim'
+Plugin 'reedes/vim-pencil'
+Plugin 'OmniSharp/omnisharp-vim'
+Plugin 'tpope/vim-dispatch'
 
 " vaxe
-let g:vaxe_cache_server = 1
-let g:vaxe_cache_server_enable = 1
+"let g:vaxe_cache_server = 1
+"let g:vaxe_cache_server_enable = 1
 set autowrite
 
 if v:version > 703
 	if !has('gui_running')
-		Bundle 'Valloric/YouCompleteMe'
+		Plugin 'Valloric/YouCompleteMe'
 	end
-	Bundle 'kien/ctrlp.vim'
+	Plugin 'kien/ctrlp.vim'
 
 	let g:ycm_confirm_extra_conf = 0
 	let g:ycm_register_as_syntastic_checker = 1
@@ -54,6 +58,8 @@ if v:version > 703
 	let g:ConqueTerm_FastMode = 0
 	let g:ConqueTerm_TERM = 'xterm-256color'
 endif
+
+call vundle#end()
 
 
 " Other settings
@@ -109,3 +115,11 @@ autocmd BufNewFile,BufRead *.json set ft=javascript
 
 syntax on
 "command CDC cd %:p:h
+
+" Pencil
+let g:pencil#wrapModeDefault = 'soft'
+augroup pencil
+  autocmd!
+  autocmd FileType markdown,mkd call pencil#init()
+  autocmd FileType text         call pencil#init()
+augroup END
