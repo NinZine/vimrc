@@ -4,6 +4,7 @@
 (tooltip-mode    -1)
 ;(menu-bar-mode   -1)
 
+(setq exec-path (append exec-path '("/usr/local/bin")))
 
 (require 'package)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
@@ -15,7 +16,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (cider evil-collection geiser racket-mode which-key helm evil))))
+    (exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -27,6 +28,12 @@
   (package-refresh-contents)
   (package-install 'use-package))
 (require 'use-package)
+
+(use-package exec-path-from-shell
+	:ensure t
+	:init 
+	(when (memq window-system '(mac ns x))
+		(exec-path-from-shell-initialize)))
 
 ;; Vim mode
 (use-package evil
@@ -74,4 +81,4 @@
 
 
 (use-package cider
-  :ensure t)
+	:ensure t)
