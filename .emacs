@@ -14,9 +14,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ ;; Fullscreen
+ '(initial-frame-alist (quote ((fullscreen . maximized))))
  '(package-selected-packages
    (quote
-    (## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil))))
+    (doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -76,15 +78,33 @@
 ;; Evil collection
 (use-package evil-collection
   :after evil
+  :custom (evil-collection-setup-minibuffer t)
   :ensure t
   :config (evil-collection-init))
 
-
+;; CIDER for Clojure(Script)
 (use-package cider
-	:ensure t)
+  :ensure t)
 
 (use-package rainbow-delimiters
   :ensure t
   :init (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
+;; Highlight parenthesis
 (show-paren-mode 1)
+
+;; Quiet the bell
+(setq visible-bell 1)
+(setq ring-bell-function 'ignore)
+
+;; Relative numbers
+(use-package linum-relative
+  :ensure t
+  :init (linum-relative-mode))
+  
+;; Balancing parathensis nicely with evil-mode
+(use-package lispyville
+  :ensure t
+  :config
+  (add-hook 'emacs-lisp-mode-hook #'lispyville-mode)
+  (add-hook 'lisp-mode-hook #'lispyville-mode))
