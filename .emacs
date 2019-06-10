@@ -55,10 +55,14 @@
 ;; Helm
 (use-package helm
   :ensure t
-  :init
-  (setq helm-mode-fuzzy-match t)
-  (setq helm-completion-in-region-fuzzy-match t)
-  (setq helm-candidate-number-list 50))
+  :bind (("M-x" . helm-M-x)
+	 ("C-x C-f" . helm-find-files))
+  :config (progn
+	    (setq helm-mode-fuzzy-match t)
+	    (setq helm-completion-in-region-fuzzy-match t)
+	    (setq helm-autoresize-mode 1)
+	    (setq helm-autoresize-max-height 0)
+	    (setq helm-autoresize-min-height 20)))
 
 ;; Which Key
 (use-package which-key
@@ -100,7 +104,7 @@
 ;; Relative numbers
 (use-package linum-relative
   :ensure t
-  :init (linum-relative-mode))
+  :init (global-linum-mode 1))
   
 ;; Balancing parathensis nicely with evil-mode
 (use-package lispyville
