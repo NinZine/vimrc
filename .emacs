@@ -109,6 +109,14 @@
 ;; Balancing parathensis nicely with evil-mode
 (use-package lispyville
   :ensure t
-  :config
+  :config 
   (add-hook 'emacs-lisp-mode-hook #'lispyville-mode)
-  (add-hook 'lisp-mode-hook #'lispyville-mode))
+  (add-hook 'lisp-mode-hook #'lispyville-mode)
+  (add-hook 'lispy-mode-hook #'lispyville-mode)
+  (with-eval-after-load 'lispyville
+    (lispyville-set-key-theme
+     '(operators
+       c-w
+       (escape insert)
+       (additional-movement normal visual motion)
+       slurp/barf-lispy))))
