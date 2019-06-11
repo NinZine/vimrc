@@ -14,11 +14,13 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- ;; Fullscreen
+ '(evil-collection-setup-minibuffer t)
+ '(global-linum-mode t)
+ '(helm-mode nil)
  '(initial-frame-alist (quote ((fullscreen . maximized))))
  '(package-selected-packages
    (quote
-    (doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil))))
+    (helm-projectile doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -63,6 +65,10 @@
 	    (setq helm-autoresize-mode 1)
 	    (setq helm-autoresize-max-height 0)
 	    (setq helm-autoresize-min-height 20)))
+
+(use-package helm-projectile
+  :ensure t
+  :bind (("C-c p" . helm-projectile-find-file)))
 
 ;; Which Key
 (use-package which-key
