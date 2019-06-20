@@ -15,12 +15,12 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(evil-collection-setup-minibuffer t)
+ '(geiser-default-implementation (quote chicken))
  '(global-linum-mode t)
- '(helm-mode nil)
  '(initial-frame-alist (quote ((fullscreen . maximized))))
  '(package-selected-packages
    (quote
-    (helm-projectile doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil))))
+    (tide web-mode helm-projectile doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -83,6 +83,7 @@
 ;; Racket
 (use-package geiser
   :ensure t
+  :config (setq geiser-active-implemenations '(chicken))
   :init)
 
 ;; Evil collection
@@ -126,3 +127,26 @@
        (escape insert)
        (additional-movement normal visual motion)
        slurp/barf-lispy))))
+
+
+;; HTML development
+(use-package web-mode
+  :ensure t
+  :init
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
+  (setq web-mode-enable-current-element-highlight t))
+
+;; Typescript
+(use-package tide
+  :ensure t
+  :after (typescript-mode flycheck)
+  :hook ((typescript-mode . tide-setup)
+         (typescript-mode . tide-hl-identifier-mode)
+         (before-save . tide-formater-before-save)))
+
+;; Syntax checking
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
