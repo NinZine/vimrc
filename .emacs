@@ -34,10 +34,10 @@
 (require 'use-package)
 
 (use-package exec-path-from-shell
-	:ensure t
-	:init 
-	(when (memq window-system '(mac ns x))
-		(exec-path-from-shell-initialize)))
+  :ensure t
+  :init
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
 
 ;; Vim mode
 (use-package evil
@@ -116,7 +116,7 @@
 ;; Balancing parathensis nicely with evil-mode
 (use-package lispyville
   :ensure t
-  :config 
+  :config
   (add-hook 'emacs-lisp-mode-hook #'lispyville-mode)
   (add-hook 'lisp-mode-hook #'lispyville-mode)
   (add-hook 'lispy-mode-hook #'lispyville-mode)
@@ -130,12 +130,35 @@
 
 
 ;; HTML development
+(defun setup-tide-mode ()
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1))
+
 (use-package web-mode
   :ensure t
-  :init
-  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
-  (setq web-mode-enable-current-element-highlight t))
+  :mode (("\\.html?\\'" . web-mode)
+	 ("\\.tsx\\'" . web-mode)
+	 ("\\.jsx\\'" . web-mode))
+  :config
+  (setq web-mode-markup-indent-offset 2
+	web-mode-css-indent-offset 2
+	web-mode-code-indent-offset 2
+	web-mode-block-padding 2
+	web-mode-comment-style 2
+
+	web-mode-enable-css-colorization t
+	web-mode-enable-auto-pairing t
+	web-mode-enable-comment-keywords t
+	web-mode-enable-current-element-highlight t)
+
+  (add-hook 'web-mode-hook
+	    (lambda ()
+	      (when (string-equal "tsx" (file-name-extension buffer-file-name))
+		(setup-tide-mode)))))
 
 ;; Typescript
 (use-package tide
@@ -150,3 +173,5 @@
   :ensure t
   :init (global-flycheck-mode))
 
+
+;;; .emacs ends here
