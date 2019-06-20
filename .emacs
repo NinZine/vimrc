@@ -51,7 +51,8 @@
 (use-package doom-themes
   :ensure t
   :config
-  (load-theme 'doom-one t))
+  (setq-default line-spacing 0.25)
+  (load-theme 'doom-vibrant t))
 
 
 ;; Helm
