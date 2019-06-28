@@ -17,10 +17,11 @@
  '(evil-collection-setup-minibuffer t)
  '(geiser-default-implementation (quote chicken))
  '(global-linum-mode t)
+ '(helm-mode t)
  '(initial-frame-alist (quote ((fullscreen . maximized))))
  '(package-selected-packages
-   (quote
-    (tide web-mode helm-projectile doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil))))
+	 (quote
+		(evil-magit magit tide web-mode helm-projectile doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -44,6 +45,7 @@
   :ensure t
   :init
   (setq evil-want-keybinding nil)
+	(setq evil-shift-width 2)
   :config
   (evil-mode 1))
 
@@ -174,5 +176,14 @@
   :ensure t
   :init (global-flycheck-mode))
 
+
+;; Git plugin
+(use-package magit
+	:ensure t)
+
+;; Vim bindings for magit
+(use-package evil-magit
+	:ensure t
+	:after (magit evil-collection))
 
 ;;; .emacs ends here
