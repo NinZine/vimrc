@@ -7,7 +7,7 @@
 (setq exec-path (append exec-path '("/usr/local/bin")))
 
 (require 'package)
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -20,8 +20,8 @@
  '(helm-mode t)
  '(initial-frame-alist (quote ((fullscreen . maximized))))
  '(package-selected-packages
-	 (quote
-		(evil-magit magit tide web-mode helm-projectile doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil))))
+   (quote
+    (anaconda-mode virtualenvwrapper ein evil-magit magit tide web-mode helm-projectile doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -61,6 +61,8 @@
 (use-package helm
   :ensure t
   :bind (("M-x" . helm-M-x)
+	 ("TAB" . helm-execute-persistent-action)
+	 ("C-z" . helm-select-action)
 	 ("C-x C-f" . helm-find-files))
   :config (progn
 	    (setq helm-mode-fuzzy-match t)
@@ -86,7 +88,7 @@
 ;; Racket
 (use-package geiser
   :ensure t
-  :config (setq geiser-active-implemenations '(chicken))
+  :config (setq geiser-active-implementations '(chicken))
   :init)
 
 ;; Evil collection
@@ -114,7 +116,7 @@
 ;; Relative numbers
 (use-package linum-relative
   :ensure t
-  :init (global-linum-mode 1))
+  :init (global-linum-mode t))
   
 ;; Balancing parathensis nicely with evil-mode
 (use-package lispyville
@@ -185,5 +187,22 @@
 (use-package evil-magit
 	:ensure t
 	:after (magit evil-collection))
+
+;; Python
+(use-package ein
+  :ensure t)
+
+(use-package virtualenvwrapper
+  :ensure t)
+
+(use-package anaconda-mode
+  :ensure t
+  :hook ((python-mode . anaconda-mode)
+	 (python-mode . anaconda-eldoc-mode)))
+
+;;'(python-shell-interpreter "jupyter")
+;;'(python-shell-interpreter-args "console --simple-prompt")
+;;'(python-shell-prompt-detect-failure-warning nil)
+
 
 ;;; .emacs ends here
