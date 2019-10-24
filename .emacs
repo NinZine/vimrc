@@ -21,7 +21,7 @@
  '(initial-frame-alist (quote ((fullscreen . maximized))))
  '(package-selected-packages
    (quote
-    (anaconda-mode virtualenvwrapper ein evil-magit magit tide web-mode helm-projectile doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil))))
+    (restclient anaconda-mode virtualenvwrapper ein evil-magit magit tide web-mode helm-projectile doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -208,5 +208,8 @@
 ;;'(python-shell-interpreter-args "console --simple-prompt")
 ;;'(python-shell-prompt-detect-failure-warning nil)
 
+;; REST
+(use-package restclient
+  :ensure t)
 
 ;;; .emacs ends here
