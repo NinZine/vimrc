@@ -61,9 +61,8 @@
 (use-package helm
   :ensure t
   :bind (("M-x" . helm-M-x)
-	 ("TAB" . helm-execute-persistent-action)
-	 ("C-z" . helm-select-action)
-	 ("C-x C-f" . helm-find-files))
+	 ("C-x C-f" . helm-find-files)
+	 ("C-x b" . helm-mini))
   :config (progn
 	    (setq helm-mode-fuzzy-match t)
 	    (setq helm-completion-in-region-fuzzy-match t)
@@ -116,6 +115,7 @@
 ;; Relative numbers
 (use-package linum-relative
   :ensure t
+  :config (setq linum-relative-global-mode t)
   :init (global-linum-mode t))
   
 ;; Balancing parathensis nicely with evil-mode
@@ -201,6 +201,9 @@
 
 (use-package anaconda-mode
   :ensure t
+  :config (progn
+	    (setq python-shell-interpreter "ipython")
+	    (setq python-shell-interpreter-args "--simple-prompt -i --matplotlib=auto --pylab=auto --colors=Linux"))
   :hook ((python-mode . anaconda-mode)
 	 (python-mode . anaconda-eldoc-mode)))
 
