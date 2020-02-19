@@ -17,17 +17,28 @@
  '(evil-collection-setup-minibuffer t)
  '(geiser-default-implementation (quote chicken))
  '(global-linum-mode t)
+ '(helm-completion-style (quote emacs))
  '(helm-mode t)
  '(initial-frame-alist (quote ((fullscreen . maximized))))
  '(package-selected-packages
    (quote
-    (restclient anaconda-mode virtualenvwrapper ein evil-magit magit tide web-mode helm-projectile doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil))))
+    (slime hy-mode flutter dart-mode restclient pyvenv helm-projectile anaconda-mode virtualenvwrapper ein evil-magit magit tide web-mode doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil)))
+ '(show-paren-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ (when (eq system-type 'windows-nt)
+   '(default ((t (:family "Consolas" :foundry "outline" :slant normal :weight normal :height 98 :width normal))))))
+
+;; Save backups and auto-save files to temp directory
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+
+
 ;; Bootstrap `use-package`
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -61,8 +72,10 @@
 (use-package helm
   :ensure t
   :bind (("M-x" . helm-M-x)
-	 ("C-x C-f" . helm-find-files)
-	 ("C-x b" . helm-mini))
+	 ("C-x b" . helm-mini)
+	 ("TAB" . helm-execute-persistent-action)
+	 ("C-z" . helm-select-action)
+	 ("C-x C-f" . helm-find-files))
   :config (progn
 	    (setq helm-mode-fuzzy-match t)
 	    (setq helm-completion-in-region-fuzzy-match t)
@@ -70,10 +83,32 @@
 	    (setq helm-autoresize-max-height 0)
 	    (setq helm-autoresize-min-height 20)))
 
-(use-package helm-projectile
+(use-package projectile
   :ensure t
+  :after helm
+  :init
+  (setq projectile-enable-caching t)
+  (setq projectile-indexing-method 'alien)
+  :config
+  (projectile-mode))
+
+(use-package helm-projectile
+  ;; For Windows, install MSYS and put in the path so 'find' is available
+  :ensure t
+  :after projectile
   :bind (("C-c p" . helm-projectile-find-file)))
 
+;; C/C++/ObjC
+(use-package semantic
+  :after evil-collection
+  :config (progn
+	    (evil-collection-define-key 'normal 'semantic-mode-map
+	    "gd" 'semantic-ia-fast-jump))
+  :hook ((c-mode . semantic-mode)
+	 (c++-mode . semantic-mode)))
+
+(use-package ede
+  :config (global-ede-mode))
 ;; Which Key
 (use-package which-key
   :ensure t
@@ -89,6 +124,17 @@
   :ensure t
   :config (setq geiser-active-implementations '(chicken))
   :init)
+
+;; Common Lisp
+(use-package slime
+  :ensure t
+  :init (progn
+	  ;; (setq inferior-lisp-program "sbcl.exe")
+	  (setq slime-default-lisp "sbcl")
+	  (setq slime-lisp-implementations
+		'((ecl ("c:/msys64/usr/local/ecl.exe"))
+		  (sbcl ("c:/Program Files/Steel Bank Common Lisp/sbcl.exe")))))
+  :config (setq slime-contribs '(slime-fancy slime-quicklisp slime-asdf)))
 
 ;; Evil collection
 (use-package evil-collection
@@ -115,9 +161,8 @@
 ;; Relative numbers
 (use-package linum-relative
   :ensure t
-  :config (setq linum-relative-global-mode t)
-  :init (global-linum-mode t))
-  
+  :config (linum-relative-global-mode))
+
 ;; Balancing parathensis nicely with evil-mode
 (use-package lispyville
   :ensure t
@@ -201,9 +246,11 @@
 
 (use-package anaconda-mode
   :ensure t
+  ;; For Windows, pip install pyreadline.
+  ;; pyvenv-create to create a new env, pyvenv-workon and venv-work to use it
   :config (progn
 	    (setq python-shell-interpreter "ipython")
-	    (setq python-shell-interpreter-args "--simple-prompt -i --matplotlib=auto --pylab=auto --colors=Linux"))
+	    (setq python-shell-interpreter-args "--simple-prompt -i "))
   :hook ((python-mode . anaconda-mode)
 	 (python-mode . anaconda-eldoc-mode)))
 
