@@ -5,9 +5,14 @@
 ;(menu-bar-mode   -1)
 
 (setq exec-path (append exec-path '("/usr/local/bin")))
+;; MSYS2, mingw32
+(when (eq system-type 'windows-nt)
+  (setq exec-path (append exec-path '("c:/msys64/mingw64/bin" "c:/msys64/usr/bin")))
+  (setenv "PATH" (concat "c:\\msys64\\mingw64\\bin" ";" "c:\\msys64\\usr\\bin" ";" (getenv "PATH"))))
 
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+(add-to-list 'package-archives '("ELPA" . "http://tromey.com/elpa/") t)
 (package-initialize)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -38,6 +43,19 @@
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
 
+;; Do not open new dired buffers when navigating
+(put 'dired-find-alternate-file 'disabled nil)
+
+;; Column number mode, show column numbers
+(setq column-number-mode t)
+
+
+;; Quelpa
+(unless (package-installed-p 'quelpa)
+    (with-temp-buffer
+      (url-insert-file-contents "https://github.com/quelpa/quelpa/raw/master/quelpa.el")
+      (eval-buffer)
+      (quelpa-self-upgrade)))
 
 ;; Bootstrap `use-package`
 (unless (package-installed-p 'use-package)
@@ -225,7 +243,8 @@
 ;; Syntax checking
 (use-package flycheck
   :ensure t
-  :init (global-flycheck-mode))
+  :init (global-flycheck-mode)
+  :config (add-hook 'python-mode-hook #'(lambda () (setq flycheck-checker 'python-mypy))))
 
 
 ;; Git plugin
