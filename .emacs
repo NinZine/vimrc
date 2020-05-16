@@ -27,7 +27,7 @@
  '(initial-frame-alist (quote ((fullscreen . maximized))))
  '(package-selected-packages
    (quote
-    (slime hy-mode flutter dart-mode restclient pyvenv helm-projectile anaconda-mode virtualenvwrapper ein evil-magit magit tide web-mode doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil)))
+    (quelpa-use-package pydoc slime hy-mode flutter dart-mode restclient pyvenv helm-projectile anaconda-mode virtualenvwrapper ein evil-magit magit tide web-mode doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil)))
  '(show-paren-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -58,6 +58,13 @@
       (quelpa-self-upgrade)))
 
 ;; Bootstrap `use-package`
+(unless (package-installed-p 'quelpa-use-package)
+  (quelpa
+   '(quelpa-use-package
+     :fetcher git
+     :url "https://github.com/quelpa/quelpa-use-package.git")))
+(require 'quelpa-use-package)
+
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
@@ -257,6 +264,9 @@
 	:after (magit evil-collection))
 
 ;; Python
+(use-package pydoc
+  :quelpa (pydoc :repo "whitypig/pydoc" :fetcher github))
+
 (use-package ein
   :ensure t)
 
