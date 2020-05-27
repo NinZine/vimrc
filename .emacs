@@ -27,7 +27,7 @@
  '(initial-frame-alist (quote ((fullscreen . maximized))))
  '(package-selected-packages
    (quote
-    (quelpa-use-package pydoc slime hy-mode flutter dart-mode restclient pyvenv helm-projectile anaconda-mode virtualenvwrapper ein evil-magit magit tide web-mode doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil)))
+    (company-mode nim-mode flycheck-nimsuggest company inim quelpa-use-package pydoc slime hy-mode flutter dart-mode restclient pyvenv helm-projectile anaconda-mode virtualenvwrapper ein evil-magit magit tide web-mode doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil)))
  '(show-paren-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -290,5 +290,28 @@
 ;; REST
 (use-package restclient
   :ensure t)
+
+;; Nim
+(use-package company
+  :ensure t)
+
+(use-package nim-mode
+  :quelpa (nim-mode :repo "nim-lang/nim-mode" :fetcher github)
+  :hook ((nim-mode . nimsuggest-mode)
+	 (nim-mode . flymake-mode)
+	 (nim-mode . company-mode)
+	 ;; Disable flycheck-mode because infinite loop
+	 (nim-mode . (lambda () (flycheck-mode -1))))
+  :config (progn
+	    (setq nimsuggest-accept-process-delay 50)
+	    (setq nimsuggest-accept-process-timeout-count 100)
+	    ;(add-hook 'nim-mode-hook #'(lambda () (flycheck-mode -1)))
+	    ;(setq-default flycheck-disabled-checkers '(nim nim-nimsuggest))
+	    (evil-collection-define-key 'normal 'nim-mode-map
+	    "gd" 'xref-find-definitions)))
+
+(use-package inim
+  :quelpa (inim :repo "SerialDev/inim-mode" :fetcher github)
+  :after nim-mode)
 
 ;;; .emacs ends here
