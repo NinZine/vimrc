@@ -1,0 +1,21 @@
+# code --list-extensions | % { "code --install-extension $_" }
+code --install-extension acestojanoski.ace-palenight
+code --install-extension cospaia.calva-fmt
+code --install-extension cospaia.clojure4vscode
+code --install-extension cospaia.paredit-revived
+code --install-extension Dart-Code.dart-code
+code --install-extension Dart-Code.flutter
+code --install-extension eamodio.gitlens
+code --install-extension esbenp.prettier-vscode
+code --install-extension kahole.magit
+code --install-extension kosz78.nim
+code --install-extension ms-dotnettools.csharp
+code --install-extension ms-python.python
+code --install-extension ms-vscode-remote.remote-wsl
+code --install-extension ms-vscode.cpptools
+code --install-extension ms-vscode.vscode-typescript-tslint-plugin
+code --install-extension msjsdiag.cordova-tools
+code --install-extension oderwat.indent-rainbow
+code --install-extension planbcoding.vscode-react-refactor
+code --install-extension Tyriar.shell-launcher
+code --install-extension vscodevim.vim

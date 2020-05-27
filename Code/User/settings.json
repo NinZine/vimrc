@@ -1,0 +1,66 @@
+{
+    "vim.useCtrlKeys": true,
+    "window.zoomLevel": 0,
+    "vim.disableAnnoyingNeovimMessage": true,
+    "python.pythonPath": "C:\\Users\\ninzine\\WinPython-64bit-3.6.1.0Qt5\\python-3.6.1.amd64\\python.exe",
+    "workbench.editor.enablePreview": true,
+    "workbench.editor.enablePreviewFromQuickOpen": true,
+    "editor.quickSuggestions": {
+        "other": false,
+        "comments": false,
+        "strings": false
+    },
+    "editor.suggestOnTriggerCharacters": false,
+    "window.openFilesInNewWindow": "off",
+    "editor.tabSize": 2,
+    "jupyter.appendResults": false,
+    "explorer.confirmDelete": false,
+    "editor.autoClosingBrackets": "always",
+    "breadcrumbs.enabled": true,
+    "prettier.tslintIntegration": true,
+    "vim.normalModeKeyBindings": [
+        {
+            "before": ["j"],
+            "after": ["g", "j"]
+        }, {
+            "before": ["k"],
+            "after": ["g", "k"]
+        }
+    ],
+    "vim.insertModeKeyBindings": [
+        {
+            "before": ["j", "j"],
+            "after": ["<Esc>"]
+        },
+        {
+            "before": ["<Esc>"],
+            "after": []
+        }
+    ],
+    "python.dataScience.sendSelectionToInteractiveWindow": true,
+    "workbench.editor.showTabs": false,
+    "python.dataScience.askForKernelRestart": false,
+    "editor.fontSize": 12,
+    "terminal.integrated.fontSize": 12,
+    "debug.console.fontSize": 12,
+    "markdown.preview.fontSize": 12,
+    "vim.easymotionMarkerFontSize": "12",
+    "vim.easymotionMarkerHeight": 12,
+    "editor.lineNumbers": "relative",
+    "editor.lineHeight": 18,
+    "workbench.colorTheme": "Ace Palenight",
+    "workbench.activityBar.visible": true,
+    "workbench.sideBar.location": "right",
+    "terminal.integrated.shell.windows": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "shellLauncher.shells.windows": [
+        {
+            "label": "MINGW64",
+            "shell": "c:\\msys64\\usr\\bin\\bash.exe",
+            "args": ["--login", "-i"],
+            "env": {
+                "MSYSTEM": "MINGW64",
+                "CHERE_INVOKING": "1"
+            },
+        }
+    ]
+}
