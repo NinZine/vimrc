@@ -1,10 +1,13 @@
 ;; Minimal UI
 (scroll-bar-mode -1)
-;(tool-bar-mode   -1)
+(tool-bar-mode   -1)
 (tooltip-mode    -1)
 ;(menu-bar-mode   -1)
 
-(setq exec-path (append exec-path '("/usr/local/bin")))
+;; Linux/Mac
+(when (not (eq system-type 'windows-nt))
+  (setq exec-path (append exec-path '("/usr/local/bin"))))
+
 ;; MSYS2, mingw32
 (when (eq system-type 'windows-nt)
   (setq exec-path (append exec-path '("c:/msys64/mingw64/bin" "c:/msys64/usr/bin")))
