@@ -30,7 +30,7 @@
  '(initial-frame-alist (quote ((fullscreen . maximized))))
  '(package-selected-packages
    (quote
-    (company-mode nim-mode flycheck-nimsuggest company inim quelpa-use-package pydoc slime hy-mode flutter dart-mode restclient pyvenv helm-projectile anaconda-mode virtualenvwrapper ein evil-magit magit tide web-mode doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser racket-mode which-key helm evil)))
+    (blacken isortify company-box frame-local company-anaconda anaconda-mode virtualenvwrapper ein helm-org-rifle nov olivetti company-mode nim-mode flycheck-nimsuggest company inim quelpa-use-package pydoc slime flutter dart-mode restclient pyvenv helm-projectile evil-magit magit tide web-mode doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser which-key helm evil)))
  '(show-paren-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -254,7 +254,7 @@
 (use-package flycheck
   :ensure t
   :init (global-flycheck-mode)
-  :config (add-hook 'python-mode-hook #'(lambda () (setq flycheck-checker 'python-mypy))))
+  :hook (python-mode . (lambda () (setq flycheck-checker 'python-mypy))))
 
 
 ;; Git plugin
@@ -277,7 +277,7 @@
   :ensure t)
 
 (use-package anaconda-mode
-  :ensure t
+  :quelpa (anaconda-mode :repo "pythonic-emacs/anaconda-mode" :fetcher github)
   ;; For Windows, pip install pyreadline.
   ;; pyvenv-create to create a new env, pyvenv-workon and venv-work to use it
   :config (progn
@@ -290,14 +290,33 @@
 ;;'(python-shell-interpreter-args "console --simple-prompt")
 ;;'(python-shell-prompt-detect-failure-warning nil)
 
+(use-package isortify
+  :quelpa (isortify :repo "pythonic-emacs/isortify" :fetcher github)
+  :hook ((python-mode . isortify-mode)))
+
+(use-package blacken
+  :quelpa (blacken :repo "pythonic-emacs/blacken" :fetcher github)
+  :hook ((python-mode . blacken-mode)))
+
+(use-package company
+  :ensure t)
+
+(use-package company-anaconda
+  :quelpa (company-anaconda :repo "pythonic-emacs/company-anaconda" :fetcher github)
+  :after company
+  :hook ((python-mode . (lambda () (add-to-list 'company-backends 'company-anaconda)))
+	 (python-mode . company-mode)))
+
+(use-package company-box
+  :quelpa (company-box :repo "sebastiencs/company-box" :fetcher github)
+  :after company
+  :hook (company-mode . company-box-mode))
+
 ;; REST
 (use-package restclient
   :ensure t)
 
 ;; Nim
-(use-package company
-  :ensure t)
-
 (use-package nim-mode
   :quelpa (nim-mode :repo "nim-lang/nim-mode" :fetcher github)
   :hook ((nim-mode . nimsuggest-mode)
