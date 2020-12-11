@@ -403,4 +403,17 @@
   :quelpa (inim :repo "SerialDev/inim-mode" :fetcher github)
   :after nim-mode)
 
+;; Writing and organizing
+(use-package org
+  :hook ((org-mode . (lambda () (setq fill-column 80)))
+	 (org-mode . auto-fill-mode)
+	 (org-mode . olivetti-mode)))
+
+(use-package markdown
+  :hook ((markdown-mode . auto-fill-mode)
+	 (markdown-mode . olivetti-mode)))
+
+(use-package olivetti
+  :hook ((olivetti-mode . (lambda () (setq olivetti-body-width 90)))))
+
 ;;; .emacs ends here
