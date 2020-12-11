@@ -1,8 +1,12 @@
+
+;;; Code:
 ;; Minimal UI
-(scroll-bar-mode -1)
-(tool-bar-mode   -1)
-(tooltip-mode    -1)
-;(menu-bar-mode   -1)
+(when (not (eq (window-system) nil))
+  (progn
+    ;(menu-bar-mode   -1)
+    (scroll-bar-mode -1)
+    (tool-bar-mode   -1)
+    (tooltip-mode    -1)))
 
 ;; Linux/Mac
 (when (not (eq system-type 'windows-nt))
@@ -22,7 +26,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(evil-collection-setup-minibuffer t)
+ '(company-box-enable-icon nil)
  '(geiser-default-implementation (quote chicken))
  '(global-linum-mode t)
  '(helm-completion-style (quote emacs))
@@ -79,12 +83,41 @@
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
 
+
+;; Fix `cygstart` not found in MSYS when opening URLs
+(when (eq system-type 'cygwin)
+  (progn
+    (setq
+     browse-url-browser-function
+     (lambda (url &optional _new-window)
+       (interactive (browse-url-interactive-arg "URL: "))
+       (shell-command (concat "start " (shell-quote-argument url)()))))
+    ;; Copy/cut/paste to Windows from terminal in MSYS
+    (setq
+     interprogram-cut-function
+     (lambda (text)
+       (with-temp-buffer
+	 (insert text)
+	 ;; XXX: With clip.exe if you prefer
+	 ;; (call-process-region (point-min) (point-max) "clip.exe" t t nil))))
+	 (write-region (point-min) (point-max) "/dev/clipboard" nil 'silent))))
+    (setq
+     interprogram-paste-function
+     (lambda ()
+       ;; Remove ^M characters before pasting
+       (let ((clip-output (replace-regexp-in-string "" "" (shell-command-to-string "cat /dev/clipboard"))))
+	 (unless (string= (car kill-ring) clip-output)
+	   clip-output))))))
+
+
 ;; Vim mode
 (use-package evil
   :ensure t
-  :init
-  (setq evil-want-keybinding nil)
-	(setq evil-shift-width 2)
+  :init (progn
+	  (setq evil-want-keybinding nil)
+	  ;; Fix for TAB when not in GUI
+	  (setq evil-want-C-i-jump nil)
+	  (setq evil-shift-width 2))
   :config
   (evil-mode 1))
 
@@ -136,7 +169,9 @@
 	 (c++-mode . semantic-mode)))
 
 (use-package ede
-  :config (global-ede-mode))
+  :hook ((c-mode . ede-minor-mode)
+	 (c++-mode . ede-minor-mode)))
+
 ;; Which Key
 (use-package which-key
   :ensure t
@@ -167,8 +202,8 @@
 ;; Evil collection
 (use-package evil-collection
   :after evil
-  :custom (evil-collection-setup-minibuffer t)
   :ensure t
+  :init (setq evil-collection-setup-minibuffer t)
   :config (evil-collection-init))
 
 ;; CIDER for Clojure(Script)
@@ -245,10 +280,11 @@
   :ensure t
   :config
   (setq typescript-indent-level 2)
-  :after (typescript-mode flycheck)
+  :after (typescript-mode flycheck company)
   :hook ((typescript-mode . tide-setup)
          (typescript-mode . tide-hl-identifier-mode)
-         (before-save . tide-formater-before-save)))
+         (typescript-mode . company-mode)
+         (before-save . tide-format-before-save)))
 
 ;; Syntax checking
 (use-package flycheck
@@ -267,13 +303,44 @@
 	:after (magit evil-collection))
 
 ;; Python
+;; Fixes for not getting echo in run-python
+(defun python-shell-append-to-output (string)
+  (let ((buffer (current-buffer)))
+    (set-buffer (process-buffer (python-shell-get-process)))
+    (let ((oldpoint (point)))
+      (goto-char (process-mark (python-shell-get-process)))
+      (insert string)
+      (set-marker (process-mark (python-shell-get-process)) (point))
+      (goto-char oldpoint))
+    (set-buffer buffer)))
+
+(defadvice python-shell-send-string
+    (around advice-python-shell-send-string activate)
+  (interactive)
+  (let* ((append-string1
+         (if (string-match "import codecs, os;__pyfile = codecs.open.*$" string)
+             (replace-match "" nil nil string)
+           string))
+        (append-string2
+         (if (string-match "^# -\\*- coding: utf-8 -\\*-\n*$" append-string1)
+             (replace-match "" nil nil append-string1)
+           append-string1))
+        (append-string
+         (if (string-match "^\n*$" append-string2)
+             (replace-match "" nil nil append-string2)
+           append-string2)))  
+    (python-shell-append-to-output
+     (concat (string-trim-right append-string) "\n")))
+  (if (called-interactively-p 'any)
+      (call-interactively (ad-get-orig-definition 'python-shell-send-string))
+    ad-do-it))
 (use-package pydoc
   :quelpa (pydoc :repo "whitypig/pydoc" :fetcher github))
 
 (use-package ein
   :ensure t)
 
-(use-package virtualenvwrapper
+(use-package pyvenv
   :ensure t)
 
 (use-package anaconda-mode
