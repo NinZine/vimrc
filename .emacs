@@ -32,9 +32,16 @@
  '(helm-completion-style (quote emacs))
  '(helm-mode t)
  '(initial-frame-alist (quote ((fullscreen . maximized))))
+ '(org-capture-templates
+   (quote
+    (("l" "Log entry" plain
+      (file+olp+datetree "z:/Org/log.org")))))
+ '(org-export-backends (quote (ascii html icalendar latex md odt)))
+ '(org-journal-dir "z:/Journal/")
+ '(org-journal-file-format "%Y/%Y-%m-%d.org")
  '(package-selected-packages
    (quote
-    (blacken isortify company-box frame-local company-anaconda anaconda-mode virtualenvwrapper ein helm-org-rifle nov olivetti company-mode nim-mode flycheck-nimsuggest company inim quelpa-use-package pydoc slime flutter dart-mode restclient pyvenv helm-projectile evil-magit magit tide web-mode doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser which-key helm evil)))
+    (org-journal org company-go go-mode pydoc virtualenvwrapper company-quickhelp pos-tip blacken isortify company-box frame-local company-anaconda anaconda-mode ein helm-org-rifle nov olivetti company-mode nim-mode flycheck-nimsuggest company inim quelpa-use-package slime flutter dart-mode restclient pyvenv helm-projectile evil-magit magit tide web-mode doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser which-key helm evil)))
  '(show-paren-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -408,6 +415,9 @@
   :hook ((org-mode . (lambda () (setq fill-column 80)))
 	 (org-mode . auto-fill-mode)
 	 (org-mode . olivetti-mode)))
+
+(use-package org-journal
+  :after org)
 
 (use-package markdown
   :hook ((markdown-mode . auto-fill-mode)
