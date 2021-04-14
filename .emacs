@@ -141,9 +141,10 @@
   :ensure t
   :bind (("M-x" . helm-M-x)
 	 ("C-x b" . helm-mini)
+	 ("C-x C-f" . helm-find-files)
+	 :map helm-map
 	 ("TAB" . helm-execute-persistent-action)
-	 ("C-z" . helm-select-action)
-	 ("C-x C-f" . helm-find-files))
+	 ("C-z" . helm-select-action))
   :config (progn
 	    (setq helm-mode-fuzzy-match t)
 	    (setq helm-completion-in-region-fuzzy-match t)
