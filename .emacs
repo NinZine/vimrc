@@ -18,8 +18,9 @@
   (setenv "PATH" (concat "c:\\msys64\\mingw64\\bin" ";" "c:\\msys64\\usr\\bin" ";" (getenv "PATH"))))
 
 (require 'package)
-(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
-(add-to-list 'package-archives '("ELPA" . "http://tromey.com/elpa/") t)
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+;(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+;(add-to-list 'package-archives '("ELPA" . "http://tromey.com/elpa/") t)
 (package-initialize)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -304,11 +305,6 @@
 ;; Git plugin
 (use-package magit
 	:ensure t)
-
-;; Vim bindings for magit
-(use-package evil-magit
-	:ensure t
-	:after (magit evil-collection))
 
 ;; Python
 ;; Fixes for not getting echo in run-python
