@@ -264,19 +264,9 @@
 
 
 ;; HTML development
-(defun setup-tide-mode ()
-  (interactive)
-  (tide-setup)
-  (flycheck-mode +1)
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  (eldoc-mode +1)
-  (tide-hl-identifier-mode +1))
-
 (use-package web-mode
   :ensure t
-  :mode (("\\.html?\\'" . web-mode)
-	 ("\\.tsx\\'" . web-mode)
-	 ("\\.jsx\\'" . web-mode))
+  :mode (("\\.html?\\'" . web-mode))
   :config
   (setq web-mode-markup-indent-offset 2
 	web-mode-css-indent-offset 2
@@ -289,29 +279,30 @@
 	web-mode-enable-auto-pairing t
 	web-mode-enable-comment-keywords t
 	web-mode-enable-auto-quoting nil
-	web-mode-enable-current-element-highlight t)
-
-  (add-hook 'web-mode-hook
-	    (lambda ()
-	      (when (string-equal "tsx" (file-name-extension buffer-file-name))
-		(setup-tide-mode)))))
+	web-mode-enable-current-element-highlight t))
 
 ;; Typescript
 (use-package tide
   :ensure t
+  :mode (("\\.tsx?\\'" . typescript-mode)
+	 ("\\.jsx?\\'" . typescript-mode))
   :config
   (setq typescript-indent-level 2)
   :after (typescript-mode flycheck company)
   :hook ((typescript-mode . tide-setup)
          (typescript-mode . tide-hl-identifier-mode)
          (typescript-mode . company-mode)
+	 (typescript-mode . eldoc-mode)
+	 (typescript-mode . flycheck-mode)
+	 (typescript-mode . web-mode)
          (before-save . tide-format-before-save)))
 
 ;; Syntax checking
 (use-package flycheck
   :ensure t
   :init (global-flycheck-mode)
-  :hook (python-mode . (lambda () (setq flycheck-checker 'python-mypy))))
+  :hook ((python-mode . (lambda () (setq flycheck-checker 'python-mypy)))
+	 (typescript-mode . (lambda () (setq flycheck-check-syntax-automatically '(save mode-enabled))))))
 
 
 ;; Git plugin
