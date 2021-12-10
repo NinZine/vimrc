@@ -29,10 +29,13 @@
  ;; If there is more than one, they won't work right.
  '(company-box-enable-icon nil)
  '(geiser-default-implementation (quote chicken))
+ '(evil-collection-setup-minibuffer t)
+ '(evil-undo-system 'undo-tree)
  '(global-linum-mode t)
  '(helm-completion-style (quote emacs))
  '(helm-mode t)
  '(initial-frame-alist (quote ((fullscreen . maximized))))
+ '(linum-relative-global-mode t)
  '(org-capture-templates
    (quote
     (("l" "Log entry" plain
@@ -117,11 +120,20 @@
 	 (unless (string= (car kill-ring) clip-output)
 	   clip-output))))))
 
+(use-package clipetty
+  :ensure t
+  :if (and (not (eq system-type 'cygwin)) (eq (window-system) nil))
+  :hook (after-init . global-clipetty-mode))
 
 ;; Vim mode
+(use-package undo-tree
+  :ensure t
+  :config (global-undo-tree-mode))
 (use-package evil
   :ensure t
+  :after undo-tree
   :init (progn
+	  (setq evil-undo-system 'undo-tree)
 	  (setq evil-want-keybinding nil)
 	  ;; Fix for TAB when not in GUI
 	  (setq evil-want-C-i-jump nil)
@@ -370,6 +382,7 @@
   :hook ((python-mode . blacken-mode)))
 
 (use-package company
+  :quelpa (company-mode :repo "company-mode/company-mode" :fetcher github)
   :ensure t)
 
 (use-package company-anaconda
@@ -414,6 +427,7 @@
 	 (org-mode . olivetti-mode)))
 
 (use-package org-journal
+  :ensure t
   :after org)
 
 (use-package markdown
@@ -421,6 +435,7 @@
 	 (markdown-mode . olivetti-mode)))
 
 (use-package olivetti
+  :quelpa (olivetti :repo "rnkn/olivetti" :tag "1.11.2" :fetcher github)
   :hook ((olivetti-mode . (lambda () (setq olivetti-body-width 90)))))
 
 ;;; .emacs ends here
