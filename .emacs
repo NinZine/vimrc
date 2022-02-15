@@ -21,6 +21,10 @@
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 ;(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 ;(add-to-list 'package-archives '("ELPA" . "http://tromey.com/elpa/") t)
+(require 'gnutls)
+(when (eq system-type 'darwin)
+  (add-to-list 'gnutls-trustfiles "/opt/local/etc/openssl/cert.pem"))
+
 (package-initialize)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -179,6 +183,10 @@
   :ensure t
   :after projectile
   :bind (("C-c p" . helm-projectile-find-file)))
+
+(use-package helm-org-rifle
+  :ensure t
+  :after helm)
 
 ;; C/C++/ObjC
 (use-package semantic
