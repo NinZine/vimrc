@@ -32,7 +32,6 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(company-box-enable-icon nil)
- '(geiser-default-implementation (quote chicken))
  '(evil-collection-setup-minibuffer t)
  '(evil-undo-system 'undo-tree)
  '(display-line-numbers 'visual)
@@ -227,6 +226,13 @@
 ;;   :config (setq ccls-executable "c:/msys64/usr/local/ccls.exe")
 ;;   (evil-define-key 'normal 'c-mode-base-map "zc" 'hs-hide-level))
 
+;; Go
+(use-package go-mode
+  :ensure t)
+
+(use-package company-go
+  :ensure t)
+
 ;; Which Key
 (use-package which-key
   :ensure t
@@ -235,13 +241,6 @@
   (setq which-key-prefix-prefix "+")
   :config
   (which-key-mode))
-
-
-;; Racket
-(use-package geiser
-  :ensure t
-  :config (setq geiser-active-implementations '(chicken))
-  :init)
 
 ;; Common Lisp
 (use-package slime
