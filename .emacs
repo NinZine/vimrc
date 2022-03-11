@@ -35,14 +35,16 @@
  '(geiser-default-implementation (quote chicken))
  '(evil-collection-setup-minibuffer t)
  '(evil-undo-system 'undo-tree)
+ '(display-line-numbers 'visual)
+ '(display-line-numbers-current-absolute t)
+ '(display-line-numbers-type 'visual)
+ '(global-display-line-numbers-mode t)
  '(global-eldoc-mode t)
- '(global-linum-mode t)
  '(gnus-select-method '(nnreddit ""))
  '(helm-completion-style 'emacs)
  '(helm-minibuffer-history-key "M-p")
  '(helm-mode t)
  '(initial-frame-alist (quote ((fullscreen . maximized))))
- '(linum-relative-global-mode t)
  '(org-capture-templates
    (quote
     (("l" "Log entry" plain
@@ -51,7 +53,7 @@
  '(org-journal-dir "z:/Journal/")
  '(org-journal-file-format "%Y/%Y-%m-%d.org")
  '(package-selected-packages
-   '(company-c-headers function-args ggtags helm-gtags cmake-ide masm-mode undo-tree olivetti org-journal elfeed-org elfeed nasm-mode org company-go go-mode pydoc virtualenvwrapper company-quickhelp pos-tip blacken isortify company-box frame-local company-anaconda anaconda-mode helm-org-rifle nov company-mode nim-mode flycheck-nimsuggest company inim quelpa-use-package flutter dart-mode pyvenv helm-projectile tide web-mode use-package linum-relative ## rainbow-delimiters exec-path-from-shell))
+   '(yasnippet helm-lsp company-c-headers cmake-ide masm-mode undo-tree olivetti org-journal nasm-mode org company-go go-mode pydoc virtualenvwrapper company-quickhelp pos-tip blacken company-box frame-local company-anaconda anaconda-mode helm-org-rifle nov company-mode nim-mode flycheck-nimsuggest company inim quelpa-use-package pyvenv helm-projectile tide web-mode use-package ## rainbow-delimiters exec-path-from-shell))
  '(show-paren-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -192,25 +194,38 @@
   :after helm)
 
 ;; C/C++/ObjC
-(use-package semantic
-  :after evil-collection
-(use-package ggtags
-  :after evil-collection
-  :hook (c-mode-common . ggtags-mode)
-  :hook (c-mode-common . hs-minor-mode))
-
-(use-package helm-gtags
-  :after ggtags
-  :bind (("M-," . helm-gtags-pop-stack))
-  :hook ((c-mode . helm-gtags-mode)
-	 (c++-mode . helm-gtags-mode))
-  :config (progn
-	    (evil-define-key 'normal 'c-mode-base-map
-	      "zc" 'hs-hide-level
-	      "gd" 'helm-gtags-dwim)))
-
 (use-package ede
   :hook ((c-mode-common . ede-minor-mode)))
+
+(use-package lsp-mode :commands lsp
+  :hook ((c-mode c++-mode objc-mode cuda-mode) . lsp)
+  :hook ((c-mode-common . hs-minor-mode))
+  :config (evil-define-key 'normal 'c-mode-base-map "zc" 'hs-hide-level))
+
+(use-package helm-lsp
+  :ensure t)
+
+(use-package yasnippet
+  :after lsp-mode
+  :ensure t
+  :hook ((c-mode-common . yas-minor-mode)))
+
+
+(use-package cmake-ide
+  :ensure t)
+
+(use-package masm-mode
+  :ensure t)
+
+(use-package nasm-mode
+  :ensure t)
+
+;; XXX: Not recommended, it's better to use clangd
+;; (use-package ccls
+;;   :hook ((c-mode c++-mode objc-mode cuda-mode) . (lambda () (require 'ccls) (lsp)))
+;;   :hook ((c-mode-common . hs-minor-mode))
+;;   :config (setq ccls-executable "c:/msys64/usr/local/ccls.exe")
+;;   (evil-define-key 'normal 'c-mode-base-map "zc" 'hs-hide-level))
 
 ;; Which Key
 (use-package which-key
@@ -260,11 +275,6 @@
 ;; Quiet the bell
 (setq visible-bell 1)
 (setq ring-bell-function 'ignore)
-
-;; Relative numbers
-(use-package linum-relative
-  :ensure t
-  :config (linum-relative-global-mode))
 
 ;; Balancing parathensis nicely with evil-mode
 (use-package lispyville
