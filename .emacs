@@ -35,8 +35,11 @@
  '(geiser-default-implementation (quote chicken))
  '(evil-collection-setup-minibuffer t)
  '(evil-undo-system 'undo-tree)
+ '(global-eldoc-mode t)
  '(global-linum-mode t)
- '(helm-completion-style (quote emacs))
+ '(gnus-select-method '(nnreddit ""))
+ '(helm-completion-style 'emacs)
+ '(helm-minibuffer-history-key "M-p")
  '(helm-mode t)
  '(initial-frame-alist (quote ((fullscreen . maximized))))
  '(linum-relative-global-mode t)
@@ -48,8 +51,7 @@
  '(org-journal-dir "z:/Journal/")
  '(org-journal-file-format "%Y/%Y-%m-%d.org")
  '(package-selected-packages
-   (quote
-    (org-journal org company-go go-mode pydoc virtualenvwrapper company-quickhelp pos-tip blacken isortify company-box frame-local company-anaconda anaconda-mode ein helm-org-rifle nov olivetti company-mode nim-mode flycheck-nimsuggest company inim quelpa-use-package slime flutter dart-mode restclient pyvenv helm-projectile evil-magit magit tide web-mode doom-themes use-package lispyville linum-relative ## rainbow-delimiters exec-path-from-shell cider evil-collection geiser which-key helm evil)))
+   '(company-c-headers function-args ggtags helm-gtags cmake-ide masm-mode undo-tree olivetti org-journal elfeed-org elfeed nasm-mode org company-go go-mode pydoc virtualenvwrapper company-quickhelp pos-tip blacken isortify company-box frame-local company-anaconda anaconda-mode helm-org-rifle nov company-mode nim-mode flycheck-nimsuggest company inim quelpa-use-package flutter dart-mode pyvenv helm-projectile tide web-mode use-package linum-relative ## rainbow-delimiters exec-path-from-shell))
  '(show-paren-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -133,6 +135,7 @@
 (use-package undo-tree
   :ensure t
   :config (global-undo-tree-mode))
+
 (use-package evil
   :ensure t
   :after undo-tree
@@ -191,15 +194,23 @@
 ;; C/C++/ObjC
 (use-package semantic
   :after evil-collection
+(use-package ggtags
+  :after evil-collection
+  :hook (c-mode-common . ggtags-mode)
+  :hook (c-mode-common . hs-minor-mode))
+
+(use-package helm-gtags
+  :after ggtags
+  :bind (("M-," . helm-gtags-pop-stack))
+  :hook ((c-mode . helm-gtags-mode)
+	 (c++-mode . helm-gtags-mode))
   :config (progn
-	    (evil-collection-define-key 'normal 'semantic-mode-map
-	    "gd" 'semantic-ia-fast-jump))
-  :hook ((c-mode . semantic-mode)
-	 (c++-mode . semantic-mode)))
+	    (evil-define-key 'normal 'c-mode-base-map
+	      "zc" 'hs-hide-level
+	      "gd" 'helm-gtags-dwim)))
 
 (use-package ede
-  :hook ((c-mode . ede-minor-mode)
-	 (c++-mode . ede-minor-mode)))
+  :hook ((c-mode-common . ede-minor-mode)))
 
 ;; Which Key
 (use-package which-key
@@ -382,7 +393,9 @@
 
 (use-package company
   :quelpa (company-mode :repo "company-mode/company-mode" :fetcher github)
-  :ensure t)
+  :ensure t
+  :hook ((c-mode-common . company-mode)
+	 (c-mode-common . (lambda () (setq-local company-backends '(company-gtags company-c-headers))))))
 
 (use-package company-anaconda
   :quelpa (company-anaconda :repo "pythonic-emacs/company-anaconda" :fetcher github)
