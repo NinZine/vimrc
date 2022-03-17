@@ -32,18 +32,19 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(company-box-enable-icon nil)
- '(evil-collection-setup-minibuffer t)
- '(evil-undo-system 'undo-tree)
  '(display-line-numbers 'visual)
  '(display-line-numbers-current-absolute t)
  '(display-line-numbers-type 'visual)
+ '(gdb-many-windows t)
+ '(gdb-show-main t)
+ '(gdb-use-separate-io-buffer t)
  '(global-display-line-numbers-mode t)
  '(global-eldoc-mode t)
- '(gnus-select-method '(nnreddit ""))
  '(helm-completion-style 'emacs)
  '(helm-minibuffer-history-key "M-p")
  '(helm-mode t)
  '(initial-frame-alist (quote ((fullscreen . maximized))))
+ '(org-agenda-files (list org-directory))
  '(org-capture-templates
    (quote
     (("l" "Log entry" plain
@@ -52,7 +53,7 @@
  '(org-journal-dir "z:/Journal/")
  '(org-journal-file-format "%Y/%Y-%m-%d.org")
  '(package-selected-packages
-   '(yasnippet helm-lsp company-c-headers cmake-ide masm-mode undo-tree olivetti org-journal nasm-mode org company-go go-mode pydoc virtualenvwrapper company-quickhelp pos-tip blacken company-box frame-local company-anaconda anaconda-mode helm-org-rifle nov company-mode nim-mode flycheck-nimsuggest company inim quelpa-use-package pyvenv helm-projectile tide web-mode use-package ## rainbow-delimiters exec-path-from-shell))
+   '(yasnippet helm-lsp company-c-headers masm-mode undo-tree olivetti org-journal nasm-mode org company-go go-mode pydoc virtualenvwrapper company-quickhelp pos-tip blacken company-box frame-local company-anaconda anaconda-mode helm-org-rifle nov company-mode nim-mode flycheck-nimsuggest company inim quelpa-use-package pyvenv helm-projectile tide web-mode use-package ## rainbow-delimiters exec-path-from-shell))
  '(show-paren-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -74,6 +75,9 @@
 ;; Column number mode, show column numbers
 (setq column-number-mode t)
 
+;; GDB tweaks
+(advice-add 'gdb-setup-windows :after
+            (lambda () (set-window-dedicated-p (selected-window) t)))
 
 ;; Quelpa
 (unless (package-installed-p 'quelpa)
@@ -209,10 +213,6 @@
   :ensure t
   :hook ((c-mode-common . yas-minor-mode)))
 
-
-(use-package cmake-ide
-  :ensure t)
-
 (use-package masm-mode
   :ensure t)
 
@@ -258,7 +258,18 @@
   :after evil
   :ensure t
   :init (setq evil-collection-setup-minibuffer t)
-  :config (evil-collection-init))
+  :config (progn (evil-collection-init)
+		 ;; GUD key bindings
+		 (evil-collection-define-key 'normal 'gud-minor-mode-map
+		   (kbd "<f4>") 'gud-print
+		   (kbd "<f5>") 'gud-cont
+		   (kbd "S-<f5>") 'gud-kill
+		   (kbd "<S-f6>") 'gud-tbreak
+		   (kbd "<f6>") 'gud-break
+		   (kbd "<f7>") 'gud-step
+		   (kbd "<f8>") 'gud-next
+		   (kbd "<f9>") 'gud-until
+		   (kbd "S-<f8>") 'gud-finish)))
 
 ;; CIDER for Clojure(Script)
 (use-package cider
