@@ -133,8 +133,13 @@
 
 (use-package clipetty
   :ensure t
-  :if (and (not (eq system-type 'cygwin)) (eq (window-system) nil))
+  :if (and (not (eq system-type 'cygwin)) (not (eq system-type 'gnu/linux)) (eq (window-system) nil))
   :hook (after-init . global-clipetty-mode))
+
+(use-package xclip
+  :ensure t
+  :if (and (eq system-type 'gnu/linux) (eq (window-system) nil))
+  :hook (after-init . xclip-mode))
 
 ;; Vim mode
 (use-package undo-tree
