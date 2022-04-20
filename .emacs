@@ -44,6 +44,11 @@
  '(helm-minibuffer-history-key "M-p")
  '(helm-mode t)
  '(initial-frame-alist (quote ((fullscreen . maximized))))
+ '(kickasm-command-start-indent 2)
+ '(kickasm-mnemonic-indent 2)
+ '(kickasm-preprocessor-indent 0)
+ '(kickasm-scoping-indent 2)
+ '(kickasm-scoping-label-indent 0)
  '(org-agenda-files (list org-directory))
  '(org-capture-templates
    (quote
@@ -223,6 +228,10 @@
 
 (use-package nasm-mode
   :ensure t)
+
+(use-package kickasm-mode
+  :quelpa (kickasm-mode :repo "mweidhagen/kickasm-mode" :fetcher github)
+  :mode (("\\.c64\\'" . kickasm-mode)))
 
 ;; XXX: Not recommended, it's better to use clangd
 ;; (use-package ccls
