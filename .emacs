@@ -32,6 +32,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(company-box-enable-icon nil)
+ '(compilation-always-kill t)
+ '(compilation-ask-about-save nil)
  '(display-line-numbers 'visual)
  '(display-line-numbers-current-absolute t)
  '(display-line-numbers-type 'visual)
@@ -44,9 +46,13 @@
  '(helm-minibuffer-history-key "M-p")
  '(helm-mode t)
  '(initial-frame-alist (quote ((fullscreen . maximized))))
+ '(help-window-select t)
+ '(kickasm-command "java cml.kickass.KickAssembler")
  '(kickasm-command-start-indent 2)
+ '(kickasm-indent-labels-to-scoping-level t)
  '(kickasm-mnemonic-indent 2)
  '(kickasm-preprocessor-indent 0)
+ '(kickasm-preprocessor-indentation-mode '##)
  '(kickasm-scoping-indent 2)
  '(kickasm-scoping-label-indent 0)
  '(org-agenda-files (list org-directory))
@@ -67,6 +73,9 @@
  ;; If there is more than one, they won't work right.
  (when (eq system-type 'windows-nt)
    '(default ((t (:family "Consolas" :foundry "outline" :slant normal :weight normal :height 98 :width normal))))))
+ '(kickasm-mnemonic-face ((t (:foreground "DarkOrange3" :slant normal))))
+ '(kickasm-mnemonic-slant-face ((t (:inherit normal))))
+ '(kickasm-unintended-mnemonic-face ((t (:foreground "red3" :slant normal)))))
 
 ;; Save backups and auto-save files to temp directory
 (setq backup-directory-alist
@@ -103,6 +112,25 @@
   (package-refresh-contents)
   (package-install 'use-package))
 (require 'use-package)
+
+
+;; Helper for compilation. Close the compilation window if
+;; there was no error at all. (emacs wiki)
+(defun compilation-exit-autoclose (status code msg)
+  "Hide compilation output if successful (after 1 second)."
+  ;; If M-x compile exits with a 0
+  (when (and (eq status 'exit) (zerop code))
+    ;; then bury the *compilation* buffer, so that C-x b doesn't go there
+    (let ((compilation-buffer (current-buffer)))
+    (run-with-timer 1 nil
+		    (lambda (buf)
+		      (bury-buffer buf)
+		      (delete-window (get-buffer-window buf)))
+		    compilation-buffer)))
+  ;; Always return the anticipated result of compilation-exit-message-function
+  (cons msg code))
+;; Specify my function (maybe I should have done a lambda function)
+(setq compilation-exit-message-function 'compilation-exit-autoclose)
 
 (use-package exec-path-from-shell
   :ensure t
