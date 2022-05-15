@@ -239,9 +239,12 @@
   :hook ((c-mode-common . ede-minor-mode)))
 
 (use-package lsp-mode :commands lsp
+  :after evil-collection
   :hook ((c-mode c++-mode objc-mode cuda-mode) . lsp)
   :hook ((c-mode-common . hs-minor-mode))
-  :config (evil-define-key 'normal 'c-mode-base-map "zc" 'hs-hide-level))
+  :config (evil-collection-define-key 'normal 'c-mode-base-map
+	    "K" 'lsp-describe-thing-at-point
+	    "zc" 'hs-hide-level))
 
 (use-package helm-lsp
   :ensure t)
@@ -457,7 +460,7 @@
   :quelpa (company-mode :repo "company-mode/company-mode" :fetcher github)
   :ensure t
   :hook ((c-mode-common . company-mode)
-	 (c-mode-common . (lambda () (setq-local company-backends '(company-gtags company-c-headers))))))
+	 (c-mode-common . (lambda () (setq-local company-backends '(company-c-headers))))))
 
 (use-package company-anaconda
   :quelpa (company-anaconda :repo "pythonic-emacs/company-anaconda" :fetcher github)
@@ -477,7 +480,7 @@
 ;; Nim
 (use-package nim-mode
   :quelpa (nim-mode :repo "nim-lang/nim-mode" :fetcher github)
-  :hook ((nim-mode . nimsuggest-mode)
+  :hook ((nim-mode . lsp)
 	 (nim-mode . flymake-mode)
 	 (nim-mode . company-mode)
 	 ;; Disable flycheck-mode because infinite loop
@@ -485,10 +488,9 @@
   :config (progn
 	    (setq nimsuggest-accept-process-delay 50)
 	    (setq nimsuggest-accept-process-timeout-count 100)
-	    ;(add-hook 'nim-mode-hook #'(lambda () (flycheck-mode -1)))
-	    ;(setq-default flycheck-disabled-checkers '(nim nim-nimsuggest))
 	    (evil-collection-define-key 'normal 'nim-mode-map
-	    "gd" 'xref-find-definitions)))
+	      "K" 'lsp-describe-thing-at-point
+	      "gd" 'xref-find-definitions)))
 
 (use-package inim
   :quelpa (inim :repo "SerialDev/inim-mode" :fetcher github)
