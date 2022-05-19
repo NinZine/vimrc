@@ -31,6 +31,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(avy-style 'at-full)
  '(company-box-enable-icon nil)
  '(compilation-always-kill t)
  '(compilation-ask-about-save nil)
@@ -73,6 +74,10 @@
  ;; If there is more than one, they won't work right.
  (when (eq system-type 'windows-nt)
    '(default ((t (:family "Consolas" :foundry "outline" :slant normal :weight normal :height 98 :width normal))))))
+ '(avy-lead-face ((t (:background "color-21" :foreground "brightyellow" :weight bold))))
+ '(avy-lead-face-0 ((t (:inherit avy-lead-face :background "color-21" :foreground "brightyellow"))))
+ '(avy-lead-face-1 ((t (:inherit avy-lead-face :background "color-21" :foreground "brightyellow"))))
+ '(avy-lead-face-2 ((t (:inherit avy-lead-face :background "color-21" :foreground "brightyellow"))))
  '(kickasm-mnemonic-face ((t (:foreground "DarkOrange3" :slant normal))))
  '(kickasm-mnemonic-slant-face ((t (:inherit normal))))
  '(kickasm-unintended-mnemonic-face ((t (:foreground "red3" :slant normal)))))
@@ -188,8 +193,9 @@
 	  ;; Fix for TAB when not in GUI
 	  (setq evil-want-C-i-jump nil)
 	  (setq evil-shift-width 2))
-  :config
-  (evil-mode 1))
+  :config (progn
+	    (define-key evil-normal-state-map (kbd "C-_") 'avy-goto-char)
+	    (evil-mode 1)))
 
 ;; Theme
 (use-package doom-themes
