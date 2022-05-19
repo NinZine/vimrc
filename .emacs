@@ -487,7 +487,9 @@
 (use-package org
   :hook ((org-mode . (lambda () (setq fill-column 80)))
 	 (org-mode . auto-fill-mode)
-	 (org-mode . olivetti-mode)))
+	 (org-mode . olivetti-mode))
+  :config (evil-collection-define-key 'normal 'org-mode-map
+	    (kbd "C-c t") 'org-todo))
 
 (use-package org-journal
   :ensure t
