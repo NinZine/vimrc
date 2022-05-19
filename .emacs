@@ -315,18 +315,7 @@
   :after evil
   :ensure t
   :init (setq evil-collection-setup-minibuffer t)
-  :config (progn (evil-collection-init)
-		 ;; GUD key bindings
-		 (evil-collection-define-key 'normal 'gud-minor-mode-map
-		   (kbd "<f4>") 'gud-print
-		   (kbd "<f5>") 'gud-cont
-		   (kbd "S-<f5>") 'gud-kill
-		   (kbd "<S-f6>") 'gud-tbreak
-		   (kbd "<f6>") 'gud-break
-		   (kbd "<f7>") 'gud-step
-		   (kbd "<f8>") 'gud-next
-		   (kbd "<f9>") 'gud-until
-		   (kbd "S-<f8>") 'gud-finish)))
+  :config (progn (evil-collection-init)))
 
 ;; CIDER for Clojure(Script)
 (use-package cider
@@ -508,5 +497,17 @@
 (use-package olivetti
   :quelpa (olivetti :repo "rnkn/olivetti" :tag "1.11.2" :fetcher github)
   :hook ((olivetti-mode . (lambda () (setq olivetti-body-width 90)))))
+
+
+;; GUD key bindings
+(add-hook 'gud-mode-hook (lambda () (progn
+  (define-key gud-minor-mode-map (kbd "<f4>") #'gud-print)
+  (define-key gud-minor-mode-map (kbd "<f5>") #'gud-cont)
+  (define-key gud-minor-mode-map (kbd "S-<f5>") #'gud-kill)
+  (define-key gud-minor-mode-map (kbd "<f6>") #'gud-break)
+  (define-key gud-minor-mode-map (kbd "<f7>") #'gud-step)
+  (define-key gud-minor-mode-map (kbd "<f8>") #'gud-next)
+  (define-key gud-minor-mode-map (kbd "<f9>") #'gud-until)
+  (define-key gud-minor-mode-map (kbd "S-<f8>") #'gud-finish))))
 
 ;;; .emacs ends here
