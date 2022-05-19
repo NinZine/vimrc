@@ -240,19 +240,25 @@
 
 (use-package lsp-mode :commands lsp
   :after evil-collection
-  :hook ((c-mode c++-mode objc-mode cuda-mode) . lsp)
+  ;; Code completion, documentation etc.
+  ;; for python: pip install 'python-lsp-server[all]'
+  :hook ((c-mode c++-mode objc-mode cuda-mode python-mode) . lsp)
   :hook ((c-mode-common . hs-minor-mode))
-  :config (evil-collection-define-key 'normal 'c-mode-base-map
-	    "K" 'lsp-describe-thing-at-point
-	    "zc" 'hs-hide-level))
+  :config (progn (evil-collection-define-key 'normal 'python-mode-map
+		   "K" 'lsp-describe-thing-at-point
+		   "gd" 'xref-find-definitions)
+		 (evil-collection-define-key 'normal 'c-mode-base-map
+		   "K" 'lsp-describe-thing-at-point
+		   "zc" 'hs-hide-level)))
 
 (use-package helm-lsp
   :ensure t)
 
+;; When completion in some languages, parameters can be filled in by TAB
 (use-package yasnippet
   :after lsp-mode
   :ensure t
-  :hook ((c-mode-common . yas-minor-mode)))
+  :config (yas-global-mode))
 
 (use-package masm-mode
   :ensure t)
@@ -434,23 +440,11 @@
 (use-package pyvenv
   :ensure t)
 
-(use-package anaconda-mode
-  :quelpa (anaconda-mode :repo "pythonic-emacs/anaconda-mode" :fetcher github)
-  ;; For Windows, pip install pyreadline.
-  ;; pyvenv-create to create a new env, pyvenv-workon and venv-work to use it
-  :config (progn
-	    (setq python-shell-interpreter "ipython")
-	    (setq python-shell-interpreter-args "--simple-prompt -i "))
-  :hook ((python-mode . anaconda-mode)
-	 (python-mode . anaconda-eldoc-mode)))
-
+;; For Windows, pip install pyreadline.
+;; pyvenv-create to create a new env, pyvenv-workon and venv-work to use it
 ;;'(python-shell-interpreter "jupyter")
 ;;'(python-shell-interpreter-args "console --simple-prompt")
 ;;'(python-shell-prompt-detect-failure-warning nil)
-
-(use-package isortify
-  :quelpa (isortify :repo "pythonic-emacs/isortify" :fetcher github)
-  :hook ((python-mode . isortify-mode)))
 
 (use-package blacken
   :quelpa (blacken :repo "pythonic-emacs/blacken" :fetcher github)
@@ -458,20 +452,13 @@
 
 (use-package company
   :quelpa (company-mode :repo "company-mode/company-mode" :fetcher github)
-  :ensure t
+  :bind (:map company-active-map
+	 ("C-d" . company-show-doc-buffer))
+  :config (progn (setq company-selection-default nil)
+		 (setq company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)))
+	    
   :hook ((c-mode-common . company-mode)
-	 (c-mode-common . (lambda () (setq-local company-backends '(company-c-headers))))))
-
-(use-package company-anaconda
-  :quelpa (company-anaconda :repo "pythonic-emacs/company-anaconda" :fetcher github)
-  :after company
-  :hook ((python-mode . (lambda () (add-to-list 'company-backends 'company-anaconda)))
-	 (python-mode . company-mode)))
-
-(use-package company-box
-  :quelpa (company-box :repo "sebastiencs/company-box" :fetcher github)
-  :after company
-  :hook (company-mode . company-box-mode))
+	 (c-mode-common . (lambda () (setq-local company-backends '(company-c-headers company-yasnippets))))))
 
 ;; REST
 (use-package restclient
