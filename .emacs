@@ -31,6 +31,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(Man-notify-method 'aggressive)
  '(avy-style 'at-full)
  '(company-box-enable-icon nil)
  '(compilation-always-kill t)
@@ -350,21 +351,30 @@
 
 ;; HTML development
 (use-package web-mode
-  :ensure t
+  :quelpa t
   :mode (("\\.html?\\'" . web-mode))
-  :config
-  (setq web-mode-markup-indent-offset 2
-	web-mode-css-indent-offset 2
-	css-indent-offset 2
-	web-mode-code-indent-offset 2
-	web-mode-block-padding 2
-	web-mode-comment-style 2
+  :config (progn
+	    (setq web-mode-markup-indent-offset 2
+		  web-mode-css-indent-offset 2
+		  css-indent-offset 2
+		  web-mode-code-indent-offset 2
+		  web-mode-block-padding 2
+		  web-mode-comment-style 2
 
-	web-mode-enable-css-colorization t
-	web-mode-enable-auto-pairing t
-	web-mode-enable-comment-keywords t
-	web-mode-enable-auto-quoting nil
-	web-mode-enable-current-element-highlight t))
+		  web-mode-enable-css-colorization t
+		  web-mode-enable-auto-pairing t
+		  web-mode-enable-comment-keywords t
+		  web-mode-enable-auto-quoting nil
+		  web-mode-enable-current-element-highlight t)
+	    ;; C-t overshadowed by my tmux prefix
+	    (evil-collection-define-key 'normal 'web-mode-map
+	      (kbd "C-c t a") 'web-mode-tag-attributes-sort
+	      (kbd "C-c t b") 'web-mode-tag-beginning
+	      (kbd "C-c t e") 'web-mode-tag-end
+	      (kbd "C-c t m") 'web-mode-tag-match
+	      (kbd "C-c t n") 'web-mode-tag-next
+	      (kbd "C-c t p") 'web-mode-tag-previous
+	      (kbd "C-c t s") 'web-mode-tag-select)))
 
 ;; Typescript
 (use-package tide
@@ -427,17 +437,17 @@
       (call-interactively (ad-get-orig-definition 'python-shell-send-string))
     ad-do-it))
 (use-package pydoc
-  :quelpa (pydoc :repo "whitypig/pydoc" :fetcher github))
+  :quelpa (pydoc :repo "statmobile/pydoc" :fetcher github :upgrade t))
 
 (use-package ein
   :ensure t)
 
+;; pyvenv-create to create a new env, pyvenv-workon and venv-work to use it
 (use-package pyvenv
   :ensure t)
 
 ;; For Windows, pip install pyreadline.
-;; pyvenv-create to create a new env, pyvenv-workon and venv-work to use it
-;;'(python-shell-interpreter "jupyter")
+(setq python-shell-interpreter "python")
 ;;'(python-shell-interpreter-args "console --simple-prompt")
 ;;'(python-shell-prompt-detect-failure-warning nil)
 
@@ -483,12 +493,14 @@
   :hook ((org-mode . (lambda () (setq fill-column 80)))
 	 (org-mode . auto-fill-mode)
 	 (org-mode . olivetti-mode))
-  :config (evil-collection-define-key 'normal 'org-mode-map
-	    (kbd "C-c t") 'org-todo))
+  :config (progn (evil-collection-define-key 'normal 'org-mode-map
+		   (kbd "C-c t") 'org-todo)
+		 (global-set-key (kbd "C-c o c") 'org-capture)))
 
 (use-package org-journal
   :ensure t
-  :after org)
+  :after org
+  :config (global-set-key (kbd "C-c o j") 'org-journal))
 
 (use-package markdown
   :hook ((markdown-mode . auto-fill-mode)
