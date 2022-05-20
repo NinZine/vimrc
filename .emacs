@@ -130,8 +130,9 @@
     (let ((compilation-buffer (current-buffer)))
     (run-with-timer 1 nil
 		    (lambda (buf)
+		      (when (not (string-match "rmsbolt" (buffer-name buf)))
 		      (bury-buffer buf)
-		      (delete-window (get-buffer-window buf)))
+		      (delete-window (get-buffer-window buf))))
 		    compilation-buffer)))
   ;; Always return the anticipated result of compilation-exit-message-function
   (cons msg code))
@@ -244,6 +245,8 @@
 ;; C/C++/ObjC
 (use-package ede
   :hook ((c-mode-common . ede-minor-mode)))
+(use-package rmsbolt
+  :quelpa)
 
 (use-package lsp-mode :commands lsp
   :after evil-collection
