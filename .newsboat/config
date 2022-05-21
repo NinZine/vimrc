@@ -7,6 +7,7 @@ show-read-articles no
 
 macro y set browser "echo %u | pbcopy"; open-in-browser; set browser "open %u"
 macro 2 set browser "echo %u | pbcopy"; two; set browser "open %u"
+macro l set browser "lynx %u"; open-in-browser; set browser "open %u"
 
 bind-key j next
 bind-key k prev
