@@ -482,7 +482,7 @@
 		 (setq company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)))
 	    
   :hook ((c-mode-common . company-mode)
-	 (c-mode-common . (lambda () (setq-local company-backends '(company-c-headers company-yasnippets))))))
+	 (c-mode-common . (lambda () (setq-local company-backends '(company-c-headers company-yasnippet))))))
 
 ;; REST
 (use-package restclient
@@ -540,5 +540,7 @@
   (define-key gud-minor-mode-map (kbd "<f8>") #'gud-next)
   (define-key gud-minor-mode-map (kbd "<f9>") #'gud-until)
   (define-key gud-minor-mode-map (kbd "S-<f8>") #'gud-finish))))
+
+(define-key global-map (kbd "C-c /") 'comment-line)
 
 ;;; .emacs ends here
