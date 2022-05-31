@@ -130,14 +130,30 @@
     (let ((compilation-buffer (current-buffer)))
     (run-with-timer 1 nil
 		    (lambda (buf)
-		      (when (not (string-match "rmsbolt" (buffer-name buf)))
-		      (bury-buffer buf)
-		      (delete-window (get-buffer-window buf))))
+		      (when (and 't (not (string-match "rmsbolt" (buffer-name buf))))
+			(bury-buffer buf)
+			(delete-window (get-buffer-window buf))))
 		    compilation-buffer)))
   ;; Always return the anticipated result of compilation-exit-message-function
   (cons msg code))
 ;; Specify my function (maybe I should have done a lambda function)
 (setq compilation-exit-message-function 'compilation-exit-autoclose)
+
+(defun compilation-split-window (buffer &optional args)
+  "Splits window when compiling."
+  ;; Comments are for using the compile window at the bottom instead of top
+  ;;(let* ((w (selected-window)))
+  (let* ((w (split-window)))
+        ;;(select-window (split-window))
+        (switch-to-buffer buffer)
+        (get-buffer-window buffer 0)
+	(select-window w)))
+
+(setq display-buffer-alist
+      `(("*compilation*" (display-buffer-pop-up-window display-buffer-reuse-window compilation-split-window))
+	("*kickasm*" (display-buffer-pop-up-window display-buffer-reuse-window compilation-split-window))
+	("*nim-compile*" (display-buffer-pop-up-window display-buffer-reuse-window compilation-split-window))))
+
 
 (use-package exec-path-from-shell
   :ensure t
