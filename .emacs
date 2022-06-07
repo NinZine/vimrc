@@ -524,7 +524,7 @@
 (use-package org-journal
   :ensure t
   :after org
-  :config (global-set-key (kbd "C-c o j") 'org-journal))
+  :config (global-set-key (kbd "C-c o j") 'org-journal-new-entry))
 
 (use-package markdown
   :hook ((markdown-mode . auto-fill-mode)
