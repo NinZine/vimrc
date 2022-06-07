@@ -75,10 +75,12 @@
  ;; If there is more than one, they won't work right.
  (when (eq system-type 'windows-nt)
    '(default ((t (:family "Consolas" :foundry "outline" :slant normal :weight normal :height 98 :width normal))))))
- '(avy-lead-face ((t (:background "color-21" :foreground "brightyellow" :weight bold))))
+ '(avy-goto-char-timer-face ((t (:inherit highlight :background "brightyellow" :foreground "black"))))
+ '(avy-lead-face ((t (:background "color-93" :foreground "brightyellow" :weight bold))))
  '(avy-lead-face-0 ((t (:inherit avy-lead-face :background "color-21" :foreground "brightyellow"))))
  '(avy-lead-face-1 ((t (:inherit avy-lead-face :background "color-21" :foreground "brightyellow"))))
  '(avy-lead-face-2 ((t (:inherit avy-lead-face :background "color-21" :foreground "brightyellow"))))
+ '(header-line ((t (:inherit mode-line :background "nil"))))
  '(kickasm-mnemonic-face ((t (:foreground "DarkOrange3" :slant normal))))
  '(kickasm-mnemonic-slant-face ((t (:inherit normal))))
  '(kickasm-unintended-mnemonic-face ((t (:foreground "red3" :slant normal)))))
@@ -206,12 +208,14 @@
 (use-package evil
   :ensure t
   :after undo-tree
-  :init (progn
-	  (setq evil-undo-system 'undo-tree)
-	  (setq evil-want-keybinding nil)
-	  ;; Fix for TAB when not in GUI
-	  (setq evil-want-C-i-jump nil)
-	  (setq evil-shift-width 2))
+  :hook (evil-local-mode . turn-on-undo-tree-mode)
+  :init (setq
+	 evil-mode-line-format nil
+	 evil-undo-system 'undo-tree
+	 evil-want-keybinding nil
+	 ;; Fix for TAB when not in GUI
+	 evil-want-C-i-jump nil
+	 evil-shift-width 2)
   :config (progn
 	    (define-key evil-normal-state-map (kbd "C-_") 'avy-goto-char)
 	    (evil-mode 1)))
@@ -543,5 +547,16 @@
   (define-key gud-minor-mode-map (kbd "S-<f8>") #'gud-finish))))
 
 (define-key global-map (kbd "C-c /") 'comment-line)
+
+(defvar default-mode-line-foreground (face-foreground 'mode-line))
+(defvar default-mode-line-background (face-background 'mode-line))
+(defun change-mode-line-color ()
+  (let* ((default-color (cons default-mode-line-background default-mode-line-foreground))
+	 (color (cond ((minibufferp) default-color)
+		      ((evil-insert-state-p) '("color-53" . "#ffffff"))
+		      (t default-color))))
+    (set-face-background 'mode-line (car color))
+    (set-face-foreground 'mode-line (cdr color))))
+(add-hook 'post-command-hook 'change-mode-line-color)
 
 ;;; .emacs ends here
