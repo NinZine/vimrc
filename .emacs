@@ -218,7 +218,8 @@
 	 evil-shift-width 2)
   :config (progn
 	    (define-key evil-normal-state-map (kbd "C-_") 'avy-goto-char)
-	    (evil-mode 1)))
+	    (evil-mode 1))
+  :hook (evil-local-mode . turn-on-undo-tree-mode))
 
 ;; Theme
 (use-package doom-themes
