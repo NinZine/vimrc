@@ -36,6 +36,10 @@
  '(company-box-enable-icon nil)
  '(compilation-always-kill t)
  '(compilation-ask-about-save nil)
+ '(desktop-path '("." "~/.emacs.d/" "~"))
+ '(desktop-restore-eager t)
+ '(desktop-save 'if-exists)
+ '(desktop-save-mode t)
  '(display-line-numbers 'visual)
  '(display-line-numbers-current-absolute t)
  '(display-line-numbers-type 'visual)
@@ -96,6 +100,18 @@
 
 ;; Column number mode, show column numbers
 (setq column-number-mode t)
+
+;; Fix restoring desktop windows
+;; https://emacs.stackexchange.com/questions/19190/desktop-save-mode-fails-to-save-window-layout
+(setq desktop-restore-forces-onscreen nil)
+(add-hook 'desktop-after-read-hook
+ (lambda ()
+   (frameset-restore
+    desktop-saved-frameset
+    :reuse-frames (eq desktop-restore-reuses-frames t)
+    :cleanup-frames (not (eq desktop-restore-reuses-frames 'keep))
+    :force-display desktop-restore-in-current-display
+    :force-onscreen desktop-restore-forces-onscreen)))
 
 ;; GDB tweaks
 (advice-add 'gdb-setup-windows :after
