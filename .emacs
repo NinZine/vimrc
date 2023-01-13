@@ -243,9 +243,11 @@
 ;; Theme
 (use-package doom-themes
   :ensure t
-  :config
-  (setq-default line-spacing 0.25)
-  (load-theme 'doom-vibrant t))
+  :config (progn
+	    (setq-default line-spacing 0.25)
+	    (setq doom-themes-enable-bold nil
+		  doom-themes-enable-italic nil))
+  (load-theme 'doom-monokai-pro t))
 
 
 ;; Helm
