@@ -61,7 +61,6 @@
  '(kickasm-preprocessor-indentation-mode '##)
  '(kickasm-scoping-indent 2)
  '(kickasm-scoping-label-indent 0)
- '(org-agenda-files (list org-directory))
  '(magit-todos-exclude-globs '("*.map" ".git/"))
  '(org-capture-templates
    (quote
@@ -69,6 +68,7 @@
       (file+olp+datetree "z:/Org/log.org")))))
  '(org-export-backends (quote (ascii html icalendar latex md odt)))
  '(org-journal-dir "z:/Journal/")
+ '(org-agenda-files (list org-directory))
  '(org-journal-file-format "%Y/%Y-%m-%d.org")
  '(package-selected-packages
    '(yasnippet helm-lsp company-c-headers masm-mode undo-tree olivetti org-journal nasm-mode org company-go go-mode pydoc virtualenvwrapper company-quickhelp pos-tip blacken company-box frame-local company-anaconda anaconda-mode helm-org-rifle nov company-mode nim-mode flycheck-nimsuggest company inim quelpa-use-package pyvenv helm-projectile tide web-mode use-package ## rainbow-delimiters exec-path-from-shell))
