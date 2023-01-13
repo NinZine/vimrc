@@ -62,6 +62,7 @@
  '(kickasm-scoping-indent 2)
  '(kickasm-scoping-label-indent 0)
  '(org-agenda-files (list org-directory))
+ '(magit-todos-exclude-globs '("*.map" ".git/"))
  '(org-capture-templates
    (quote
     (("l" "Log entry" plain
@@ -72,6 +73,8 @@
  '(package-selected-packages
    '(yasnippet helm-lsp company-c-headers masm-mode undo-tree olivetti org-journal nasm-mode org company-go go-mode pydoc virtualenvwrapper company-quickhelp pos-tip blacken company-box frame-local company-anaconda anaconda-mode helm-org-rifle nov company-mode nim-mode flycheck-nimsuggest company inim quelpa-use-package pyvenv helm-projectile tide web-mode use-package ## rainbow-delimiters exec-path-from-shell))
  '(show-paren-mode t))
+ '(show-paren-mode t)
+ '(undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree")))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -443,7 +446,11 @@
 
 ;; Git plugin
 (use-package magit
-	:ensure t)
+  :quelpa magit)
+
+(use-package magit-todos
+  :ensure t
+  :hook ((magit-mode . magit-todos-mode)))
 
 ;; Python
 ;; Fixes for not getting echo in run-python
