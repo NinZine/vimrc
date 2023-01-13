@@ -486,6 +486,10 @@
   (if (called-interactively-p 'any)
       (call-interactively (ad-get-orig-definition 'python-shell-send-string))
     ad-do-it))
+
+;; Folding
+(add-hook 'python-mode-hook 'hs-minor-mode)
+
 (use-package pydoc
   :quelpa (pydoc :repo "statmobile/pydoc" :fetcher github :upgrade t))
 
