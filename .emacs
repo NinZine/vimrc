@@ -304,6 +304,15 @@
 		   "K" 'lsp-describe-thing-at-point
 		   "zc" 'hs-hide-level)))
 
+(use-package dap-mode :commands (dap-python)
+  :quelpa (dap-mode :repo "emacs-lsp/dap-mode" :fetcher github)
+  :after lsp-mode
+  :ensure t
+  :config
+  (require 'dap-python) ;; FIXME: This should be a hook to python-mode
+  (setq dap-auto-configure-features '(sessions locals controls tooltip))
+  (setq dap-python-debugger 'debugpy))
+
 (use-package helm-lsp
   :ensure t)
 
