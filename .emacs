@@ -283,7 +283,9 @@
 
 (use-package helm-org-rifle
   :ensure t
-  :after helm)
+  :after helm
+  :bind (("C-c o r" . helm-org-rifle)
+	 ("C-c o d" . helm-org-rifle-org-directory)))
 
 ;; C/C++/ObjC
 (use-package ede
