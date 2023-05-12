@@ -174,7 +174,8 @@
 (setq display-buffer-alist
       `(("*compilation*" (display-buffer-pop-up-window display-buffer-reuse-window compilation-split-window))
 	("*kickasm*" (display-buffer-pop-up-window display-buffer-reuse-window compilation-split-window))
-	("*nim-compile*" (display-buffer-pop-up-window display-buffer-reuse-window compilation-split-window))))
+	("*nim-compile*" (display-buffer-pop-up-window display-buffer-reuse-window compilation-split-window))
+	("*grep*" (display-buffer-pop-up-window switch-to-buffer))))
 
 
 (use-package exec-path-from-shell
