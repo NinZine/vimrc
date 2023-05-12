@@ -601,4 +601,8 @@
     (set-face-foreground 'mode-line (cdr color))))
 (add-hook 'post-command-hook 'change-mode-line-color)
 
+;; Refresh dired directories automatically
+(setq global-auto-revert-non-file-buffers t)
+(global-auto-revert-mode)
+
 ;;; .emacs ends here
