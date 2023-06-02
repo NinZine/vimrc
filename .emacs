@@ -247,8 +247,11 @@
   :config (progn
 	    (setq-default line-spacing 0.25)
 	    (setq doom-themes-enable-bold nil
-		  doom-themes-enable-italic nil))
-  (load-theme 'doom-monokai-pro t))
+		  doom-themes-enable-italic nil)
+	    (load-theme 'doom-monokai-pro t)
+
+	    ;; Transparent background
+	    (set-face-background 'default "undefined")))
 
 
 ;; Helm
