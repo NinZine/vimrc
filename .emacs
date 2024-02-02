@@ -600,6 +600,23 @@
   :hook ((olivetti-mode . (lambda () (setq olivetti-body-width 90)))))
 
 
+(use-package llm
+  :quelpa ((llm :repo "ahyatt/llm" :fetcher github))
+  :if (executable-find "ollama"))
+
+(use-package ellama
+  :quelpa ((ellama :repo "s-kostyaev/ellama" :fetcher github))
+  :after llm
+  :if (executable-find "ollama")
+  :init
+  (setopt ellama-providers '(("zephyr" . (make-llm-ollama
+					  :chat-model "zephyr"
+					  :embedding-model "zephyr"))
+			     ("codellama" . (make-llm-ollama
+					     :chat-model "codellama:7b"
+					     :embedding-model "codellama:7b")))))
+
+
 ;; GUD key bindings
 (add-hook 'gud-mode-hook (lambda () (progn
   (define-key gud-minor-mode-map (kbd "<f4>") #'gud-print)
