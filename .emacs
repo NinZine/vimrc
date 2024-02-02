@@ -596,7 +596,7 @@
 	 (markdown-mode . olivetti-mode)))
 
 (use-package olivetti
-  :quelpa (olivetti :repo "rnkn/olivetti" :tag "1.11.2" :fetcher github)
+  :quelpa ((olivetti :repo "rnkn/olivetti" :fetcher github))
   :hook ((olivetti-mode . (lambda () (setq olivetti-body-width 90)))))
 
 
