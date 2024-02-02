@@ -177,6 +177,12 @@
 	("*nim-compile*" (display-buffer-pop-up-window display-buffer-reuse-window compilation-split-window))
 	("*grep*" (display-buffer-pop-up-window switch-to-buffer))))
 
+(defun dired-open-file ()
+  "In dired, open the file named on this line."
+  (interactive)
+  (let* ((file (dired-get-filename nil t)))
+    (call-process "open" nil 0 nil file)))
+
 
 (use-package exec-path-from-shell
   :ensure t
@@ -298,22 +304,30 @@
   :quelpa)
 
 (use-package lsp-mode :commands lsp
+  :ensure t
   :after evil-collection
   ;; Code completion, documentation etc.
   ;; for python: pip install 'python-lsp-server[all]'
   :hook ((c-mode c++-mode objc-mode cuda-mode python-mode) . lsp)
   :hook ((c-mode-common . hs-minor-mode))
-  :config (progn (evil-collection-define-key 'normal 'python-mode-map
-		   "K" 'lsp-describe-thing-at-point
-		   "gd" 'xref-find-definitions)
-		 (evil-collection-define-key 'normal 'c-mode-base-map
-		   "K" 'lsp-describe-thing-at-point
-		   "zc" 'hs-hide-level)))
+  :config (progn
+	    (evil-collection-define-key 'normal 'lsp-mode-map
+	      "K" 'lsp-describe-thing-at-point
+	      "gr" 'lsp-find-references)
+	    (evil-collection-define-key 'normal 'python-mode-map
+	      "K" 'lsp-describe-thing-at-point
+	      "gr" 'lsp-find-references
+	      "gd" 'xref-find-definitions)
+	    (evil-collection-define-key 'normal 'c-mode-base-map
+	      "K" 'lsp-describe-thing-at-point
+	      "gr" 'lsp-find-references
+	      "zc" 'hs-hide-level)))
 
 (use-package dap-mode :commands (dap-python)
   :quelpa (dap-mode :repo "emacs-lsp/dap-mode" :fetcher github)
   :after lsp-mode
   :ensure t
+  :hook (dap-session-created . (lambda () (dap-hydra)))
   :config
   (require 'dap-python) ;; FIXME: This should be a hook to python-mode
   (setq dap-auto-configure-features '(sessions locals controls tooltip))
@@ -377,11 +391,13 @@
   :after evil
   :ensure t
   :init (setq evil-collection-setup-minibuffer t)
-  :config (progn (evil-collection-init)))
+  :config (progn (evil-collection-init)
+		 (evil-collection-define-key 'normal 'dired-mode-map
+	      (kbd "C-o") 'dired-open-file)))
 
 ;; CIDER for Clojure(Script)
-(use-package cider
-  :ensure t)
+;; (use-package cider
+;;   :ensure t)
 
 (use-package rainbow-delimiters
   :ensure t
