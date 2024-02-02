@@ -627,5 +627,21 @@
 ;; Refresh dired directories automatically
 (setq global-auto-revert-non-file-buffers t)
 (global-auto-revert-mode)
+(require 'ansi-color)
+(defun colorize-compilation-buffer ()
+  (let ((inhibit-read-only t))
+    (ansi-color-apply-on-region (point-min) (point-max))))
+(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+
+;; if above code pollutes grep etc.
+;; (ignore-errors
+;;   (require 'ansi-color)
+;;   (defun my-colorize-compilation-buffer ()
+;;     (when (eq major-mode 'compilation-mode)
+;;       (ansi-color-apply-on-region compilation-filter-start (point-max))))
+;;   (add-hook 'compilation-filter-hook 'my-colorize-compilation-buffer))
+
+;; Don't whine about a process running in the buffer, just kill it
+(setq kill-buffer-query-functions nil)
 
 ;;; .emacs ends here
