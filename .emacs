@@ -33,6 +33,7 @@
  ;; If there is more than one, they won't work right.
  '(Man-notify-method 'aggressive)
  '(avy-style 'at-full)
+ '(browse-url-secondary-browser-function 'w3m-browse-url)
  '(company-box-enable-icon nil)
  '(compilation-always-kill t)
  '(compilation-ask-about-save nil)
@@ -40,6 +41,7 @@
  '(desktop-restore-eager t)
  '(desktop-save 'if-exists)
  '(desktop-save-mode t)
+ '(dired-listing-switches "-alh")
  '(display-line-numbers 'visual)
  '(display-line-numbers-current-absolute t)
  '(display-line-numbers-type 'visual)
@@ -230,6 +232,8 @@
 (use-package undo-tree
   :ensure t
   :config (global-undo-tree-mode))
+
+(use-package avy)
 
 (use-package evil
   :ensure t
