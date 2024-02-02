@@ -466,12 +466,12 @@
   (setq typescript-indent-level 2)
   :after (typescript-mode flycheck company)
   :hook ((typescript-mode . tide-setup)
-         (typescript-mode . tide-hl-identifier-mode)
-         (typescript-mode . company-mode)
+	 (typescript-mode . tide-hl-identifier-mode)
+	 (typescript-mode . company-mode)
 	 (typescript-mode . eldoc-mode)
 	 (typescript-mode . flycheck-mode)
 	 (typescript-mode . web-mode)
-         (before-save . tide-format-before-save)))
+	 (before-save . tide-format-before-save)))
 
 ;; Syntax checking
 (use-package flycheck
