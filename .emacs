@@ -1,5 +1,7 @@
 
 ;;; Code:
+(setq package-enable-at-startup nil)
+
 ;; Minimal UI
 (when (not (eq (window-system) nil))
   (progn
@@ -17,15 +19,10 @@
   (setq exec-path (append exec-path '("c:/msys64/mingw64/bin" "c:/msys64/usr/bin")))
   (setenv "PATH" (concat "c:\\msys64\\mingw64\\bin" ";" "c:\\msys64\\usr\\bin" ";" (getenv "PATH"))))
 
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
-;(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
-;(add-to-list 'package-archives '("ELPA" . "http://tromey.com/elpa/") t)
 (require 'gnutls)
 (when (eq system-type 'darwin)
   (add-to-list 'gnutls-trustfiles "/opt/local/etc/openssl/cert.pem"))
 
-(package-initialize)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -72,11 +69,11 @@
  '(org-journal-dir "z:/Journal/")
  '(org-agenda-files (list org-directory))
  '(org-journal-file-format "%Y/%Y-%m-%d.org")
- '(package-selected-packages
-   '(yasnippet helm-lsp company-c-headers masm-mode undo-tree olivetti org-journal nasm-mode org company-go go-mode pydoc virtualenvwrapper company-quickhelp pos-tip blacken company-box frame-local company-anaconda anaconda-mode helm-org-rifle nov company-mode nim-mode flycheck-nimsuggest company inim quelpa-use-package pyvenv helm-projectile tide web-mode use-package ## rainbow-delimiters exec-path-from-shell))
- '(show-paren-mode t))
+ '(org-publish-use-timestamps-flag nil)
+ '(realgud-safe-mode nil)
  '(show-paren-mode t)
- '(undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree")))
+ '(undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree-history/")))
+ '(warning-suppress-types '((use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -122,26 +119,24 @@
 (advice-add 'gdb-setup-windows :after
             (lambda () (set-window-dedicated-p (selected-window) t)))
 
-;; Quelpa
-(unless (package-installed-p 'quelpa)
-    (with-temp-buffer
-      (url-insert-file-contents "https://github.com/quelpa/quelpa/raw/master/quelpa.el")
-      (eval-buffer)
-      (quelpa-self-upgrade)))
-
-;; Bootstrap `use-package`
-(unless (package-installed-p 'quelpa-use-package)
-  (quelpa
-   '(quelpa-use-package
-     :fetcher git
-     :url "https://github.com/quelpa/quelpa-use-package.git")))
-(require 'quelpa-use-package)
-(setq use-package-ensure-function 'quelpa)
-
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-(require 'use-package)
+;; straight.el
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
 
 
 ;; Helper for compilation. Close the compilation window if
@@ -186,8 +181,23 @@
     (call-process "open" nil 0 nil file)))
 
 
+;; Writing and organizing
+(use-package org
+  ;; :quelpa ((org :url "https://git.savannah.gnu.org/git/emacs/org-mode.git"
+  ;; 		:fetcher git
+  ;; 		:tag "release_9.6"
+  ;; 		:files ("lisp/*.el" "doc/dir")))
+  ;; :ensure t
+  :hook ((org-mode . (lambda () (setq fill-column 80)))
+	 (org-mode . auto-fill-mode)
+	 (org-mode . olivetti-mode))
+  :config (progn (evil-collection-define-key 'normal 'org-mode-map
+		   (kbd "C-c t") 'org-todo)
+		 (global-set-key (kbd "C-c o c") 'org-capture)))
+
+
+;; Clipboard
 (use-package exec-path-from-shell
-  :ensure t
   :init
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
@@ -218,25 +228,22 @@
 	 (unless (string= (car kill-ring) clip-output)
 	   clip-output))))))
 
+
 (use-package clipetty
-  :ensure t
   :if (and (not (eq system-type 'cygwin)) (not (eq system-type 'gnu/linux)) (eq (window-system) nil))
   :hook (after-init . global-clipetty-mode))
 
 (use-package xclip
-  :ensure t
   :if (and (eq system-type 'gnu/linux) (eq (window-system) nil))
   :hook (after-init . xclip-mode))
 
 ;; Vim mode
 (use-package undo-tree
-  :ensure t
   :config (global-undo-tree-mode))
 
 (use-package avy)
 
 (use-package evil
-  :ensure t
   :after undo-tree
   :hook (evil-local-mode . turn-on-undo-tree-mode)
   :init (setq
@@ -253,7 +260,6 @@
 
 ;; Theme
 (use-package doom-themes
-  :ensure t
   :config (progn
 	    (setq-default line-spacing 0.25)
 	    (setq doom-themes-enable-bold nil
@@ -266,7 +272,6 @@
 
 ;; Helm
 (use-package helm
-  :ensure t
   :bind (("M-x" . helm-M-x)
 	 ("C-x b" . helm-mini)
 	 ("C-x C-f" . helm-find-files)
@@ -281,7 +286,6 @@
 	    (setq helm-autoresize-min-height 20)))
 
 (use-package projectile
-  :ensure t
   :after helm
   :init
   (setq projectile-enable-caching t)
@@ -291,24 +295,21 @@
 
 (use-package helm-projectile
   ;; For Windows, install MSYS and put in the path so 'find' is available
-  :ensure t
   :after projectile
   :bind (("C-c p" . helm-projectile-find-file)))
 
 (use-package helm-org-rifle
-  :ensure t
   :after helm
   :bind (("C-c o r" . helm-org-rifle)
 	 ("C-c o d" . helm-org-rifle-org-directory)))
 
+
 ;; C/C++/ObjC
 (use-package ede
   :hook ((c-mode-common . ede-minor-mode)))
-(use-package rmsbolt
-  :quelpa)
+(use-package rmsbolt)
 
 (use-package lsp-mode :commands lsp
-  :ensure t
   :after evil-collection
   ;; Code completion, documentation etc.
   ;; for python: pip install 'python-lsp-server[all]'
@@ -328,32 +329,27 @@
 	      "zc" 'hs-hide-level)))
 
 (use-package dap-mode :commands (dap-python)
-  :quelpa (dap-mode :repo "emacs-lsp/dap-mode" :fetcher github)
+  :straight (dap-mode :repo "emacs-lsp/dap-mode" :host github)
   :after lsp-mode
-  :ensure t
   :hook (dap-session-created . (lambda () (dap-hydra)))
   :config
   (require 'dap-python) ;; FIXME: This should be a hook to python-mode
   (setq dap-auto-configure-features '(sessions locals controls tooltip))
   (setq dap-python-debugger 'debugpy))
 
-(use-package helm-lsp
-  :ensure t)
+(use-package helm-lsp)
 
 ;; When completion in some languages, parameters can be filled in by TAB
 (use-package yasnippet
   :after lsp-mode
-  :ensure t
   :config (yas-global-mode))
 
-(use-package masm-mode
-  :ensure t)
+(use-package masm-mode)
 
-(use-package nasm-mode
-  :ensure t)
+(use-package nasm-mode)
 
 (use-package kickasm-mode
-  :quelpa (kickasm-mode :repo "mweidhagen/kickasm-mode" :fetcher github)
+  :straight (kickasm-mode :repo "mweidhagen/kickasm-mode" :host github)
   :mode (("\\.c64\\'" . kickasm-mode)))
 
 ;; XXX: Not recommended, it's better to use clangd
@@ -364,15 +360,12 @@
 ;;   (evil-define-key 'normal 'c-mode-base-map "zc" 'hs-hide-level))
 
 ;; Go
-(use-package go-mode
-  :ensure t)
+(use-package go-mode)
 
-(use-package company-go
-  :ensure t)
+(use-package company-go)
 
 ;; Which Key
 (use-package which-key
-  :ensure t
   :init
   (setq which-key-separator " ")
   (setq which-key-prefix-prefix "+")
@@ -381,7 +374,6 @@
 
 ;; Common Lisp
 (use-package slime
-  :ensure t
   :init (progn
 	  ;; (setq inferior-lisp-program "sbcl.exe")
 	  (setq slime-default-lisp "sbcl")
@@ -393,7 +385,6 @@
 ;; Evil collection
 (use-package evil-collection
   :after evil
-  :ensure t
   :init (setq evil-collection-setup-minibuffer t)
   :config (progn (evil-collection-init)
 		 (evil-collection-define-key 'normal 'dired-mode-map
@@ -404,7 +395,6 @@
 ;;   :ensure t)
 
 (use-package rainbow-delimiters
-  :ensure t
   :init (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
 ;; Highlight parenthesis
@@ -416,7 +406,6 @@
 
 ;; Balancing parathensis nicely with evil-mode
 (use-package lispyville
-  :ensure t
   :config
   (add-hook 'emacs-lisp-mode-hook #'lispyville-mode)
   (add-hook 'lisp-mode-hook #'lispyville-mode)
@@ -432,7 +421,6 @@
 
 ;; HTML development
 (use-package web-mode
-  :quelpa t
   :mode (("\\.html?\\'" . web-mode))
   :config (progn
 	    (setq web-mode-markup-indent-offset 2
@@ -459,7 +447,6 @@
 
 ;; Typescript
 (use-package tide
-  :ensure t
   :mode (("\\.tsx?\\'" . typescript-mode)
 	 ("\\.jsx?\\'" . typescript-mode))
   :config
@@ -475,18 +462,15 @@
 
 ;; Syntax checking
 (use-package flycheck
-  :ensure t
   :init (global-flycheck-mode)
   :hook ((python-mode . (lambda () (setq flycheck-checker 'python-mypy)))
 	 (typescript-mode . (lambda () (setq flycheck-check-syntax-automatically '(save mode-enabled))))))
 
 
 ;; Git plugin
-(use-package magit
-  :quelpa magit)
+(use-package magit)
 
 (use-package magit-todos
-  :ensure t
   :hook ((magit-mode . magit-todos-mode)))
 
 ;; Python
@@ -526,14 +510,13 @@
 (add-hook 'python-mode-hook 'hs-minor-mode)
 
 (use-package pydoc
-  :quelpa (pydoc :repo "statmobile/pydoc" :fetcher github :upgrade t))
+  :straight (pydoc :repo "statmobile/pydoc" :host github))
 
-(use-package ein
-  :ensure t)
+(use-package ein)
 
 ;; pyvenv-create to create a new env, pyvenv-workon and venv-work to use it
 (use-package pyvenv
-  :ensure t)
+  :init (setenv "WORKON_HOME" "~/.pyenv/versions"))
 
 ;; For Windows, pip install pyreadline.
 (setq python-shell-interpreter "python")
@@ -541,11 +524,11 @@
 ;;'(python-shell-prompt-detect-failure-warning nil)
 
 (use-package blacken
-  :quelpa (blacken :repo "pythonic-emacs/blacken" :fetcher github)
+  :straight (blacken :repo "pythonic-emacs/blacken" :host github)
   :hook ((python-mode . blacken-mode)))
 
 (use-package company
-  :quelpa (company-mode :repo "company-mode/company-mode" :fetcher github)
+  :straight (company-mode :repo "company-mode/company-mode" :host github)
   :bind (:map company-active-map
 	 ("C-d" . company-show-doc-buffer))
   :config (progn (setq company-selection-default nil)
@@ -560,7 +543,7 @@
 
 ;; Nim
 (use-package nim-mode
-  :quelpa (nim-mode :repo "nim-lang/nim-mode" :fetcher github)
+  :straight (nim-mode :repo "nim-lang/nim-mode" :host github)
   :hook ((nim-mode . lsp)
 	 (nim-mode . flymake-mode)
 	 (nim-mode . company-mode)
@@ -574,38 +557,28 @@
 	      "gd" 'xref-find-definitions)))
 
 (use-package inim
-  :quelpa (inim :repo "SerialDev/inim-mode" :fetcher github)
+  :straight (inim :repo "SerialDev/inim-mode" :host github)
   :after nim-mode)
 
-;; Writing and organizing
-(use-package org
-  :hook ((org-mode . (lambda () (setq fill-column 80)))
-	 (org-mode . auto-fill-mode)
-	 (org-mode . olivetti-mode))
-  :config (progn (evil-collection-define-key 'normal 'org-mode-map
-		   (kbd "C-c t") 'org-todo)
-		 (global-set-key (kbd "C-c o c") 'org-capture)))
 
 (use-package org-journal
-  :ensure t
   :after org
   :config (global-set-key (kbd "C-c o j") 'org-journal-new-entry))
 
-(use-package markdown
+(use-package markdown-mode
   :hook ((markdown-mode . auto-fill-mode)
 	 (markdown-mode . olivetti-mode)))
 
 (use-package olivetti
-  :quelpa ((olivetti :repo "rnkn/olivetti" :fetcher github))
+  :straight (olivetti :repo "rnkn/olivetti" :host github)
   :hook ((olivetti-mode . (lambda () (setq olivetti-body-width 90)))))
 
-
 (use-package llm
-  :quelpa ((llm :repo "ahyatt/llm" :fetcher github))
+  :straight (llm :repo "ahyatt/llm" :host github)
   :if (executable-find "ollama"))
 
 (use-package ellama
-  :quelpa ((ellama :repo "s-kostyaev/ellama" :fetcher github))
+  :straight (ellama :repo "s-kostyaev/ellama" :host github)
   :after llm
   :if (executable-find "ollama")
   :init
