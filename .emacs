@@ -42,6 +42,7 @@
  '(display-line-numbers 'visual)
  '(display-line-numbers-current-absolute t)
  '(display-line-numbers-type 'visual)
+ '(evil-want-C-w-delete nil)
  '(gdb-many-windows t)
  '(gdb-show-main t)
  '(gdb-use-separate-io-buffer t)
@@ -86,6 +87,8 @@
  '(avy-lead-face-0 ((t (:inherit avy-lead-face :background "color-21" :foreground "brightyellow"))))
  '(avy-lead-face-1 ((t (:inherit avy-lead-face :background "color-21" :foreground "brightyellow"))))
  '(avy-lead-face-2 ((t (:inherit avy-lead-face :background "color-21" :foreground "brightyellow"))))
+ '(aw-leading-char-face
+   ((t (:inherit avy-lead-face :height 3.0))))
  '(header-line ((t (:inherit mode-line :background "nil"))))
  '(kickasm-mnemonic-face ((t (:foreground "DarkOrange3" :slant normal))))
  '(kickasm-mnemonic-slant-face ((t (:inherit normal))))
@@ -257,6 +260,13 @@
 	    (define-key evil-normal-state-map (kbd "C-_") 'avy-goto-char)
 	    (evil-mode 1))
   :hook (evil-local-mode . turn-on-undo-tree-mode))
+
+(use-package ace-window
+  :after evil
+  :init (progn
+	  (setq aw-leading-char-style 'path)
+	  (setq aw-keys '(?h ?t ?s ?d ?i ?a ?o ?e ?u)))
+  :config (define-key evil-window-map "a" 'ace-window))
 
 ;; Theme
 (use-package doom-themes
