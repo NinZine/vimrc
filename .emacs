@@ -240,6 +240,10 @@
   :if (and (eq system-type 'gnu/linux) (eq (window-system) nil))
   :hook (after-init . xclip-mode))
 
+(use-package dired+
+  :config (progn (setq diredp-hide-details-initially-flag nil)
+		 (diredp-toggle-find-file-reuse-dir 1)))
+
 ;; Vim mode
 (use-package undo-tree
   :config (global-undo-tree-mode))
