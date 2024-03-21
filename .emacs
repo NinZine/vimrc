@@ -600,6 +600,7 @@
   :after llm
   :if (executable-find "ollama")
   :init
+  (setopt ellama-keymap-prefix "C-c e")
   (setopt ellama-providers '(("zephyr" . (make-llm-ollama
 					  :chat-model "zephyr"
 					  :embedding-model "zephyr"))
