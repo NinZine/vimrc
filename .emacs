@@ -280,6 +280,8 @@
 	    ;; Transparent background
 	    (set-face-background 'default "undefined")))
 
+(use-package w3m)
+
 
 ;; Helm
 (use-package helm
