@@ -30,7 +30,6 @@
  ;; If there is more than one, they won't work right.
  '(Man-notify-method 'aggressive)
  '(avy-style 'at-full)
- '(browse-url-secondary-browser-function 'w3m-browse-url)
  '(company-box-enable-icon nil)
  '(compilation-always-kill t)
  '(compilation-ask-about-save nil)
@@ -280,7 +279,10 @@
 	    ;; Transparent background
 	    (set-face-background 'default "undefined")))
 
-(use-package w3m)
+(use-package w3m
+  :config
+  (setq browse-url-browser-function 'w3m-browse-url)
+  (setq browse-url-secondary-browser-function 'browse-url-default-browser))
 
 
 ;; Helm
