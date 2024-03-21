@@ -463,6 +463,7 @@
 	      (kbd "C-c t s") 'web-mode-tag-select)))
 
 ;; Typescript
+(use-package typescript-mode)
 (use-package tide
   :mode (("\\.tsx?\\'" . typescript-mode)
 	 ("\\.jsx?\\'" . typescript-mode))
