@@ -305,7 +305,10 @@
 	    (setq helm-completion-in-region-fuzzy-match t)
 	    (setq helm-autoresize-mode 1)
 	    (setq helm-autoresize-max-height 0)
-	    (setq helm-autoresize-min-height 20)))
+	    (setq helm-autoresize-min-height 20)
+
+	    (setq helm-grep-ag-command
+		  "rg --color=always --smart-case --search-zip --no-heading --line-number %s -- %s %s")))
 
 (use-package projectile
   :after helm
