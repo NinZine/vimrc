@@ -385,9 +385,11 @@
 ;;   (evil-define-key 'normal 'c-mode-base-map "zc" 'hs-hide-level))
 
 ;; Go
-(use-package go-mode)
+(use-package go-mode
+  :if (executable-find "go"))
 
-(use-package company-go)
+(use-package company-go
+  :after go-mode)
 
 ;; Which Key
 (use-package which-key
@@ -570,6 +572,7 @@
 ;; Nim
 (use-package nim-mode
   :straight (nim-mode :repo "nim-lang/nim-mode" :host github)
+  :if (executable-find "nim")
   :hook ((nim-mode . lsp)
 	 (nim-mode . flymake-mode)
 	 (nim-mode . company-mode)
