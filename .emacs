@@ -328,6 +328,9 @@
   :bind (("C-c o r" . helm-org-rifle)
 	 ("C-c o d" . helm-org-rifle-org-directory)))
 
+;; Docker
+(use-package docker-tramp
+  :if (or (executable-find "docker") (executable-find "podman")))
 
 ;; C/C++/ObjC
 (use-package ede
