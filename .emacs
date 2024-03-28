@@ -238,6 +238,7 @@
 
 (use-package dired+
   :config (progn (setq diredp-hide-details-initially-flag nil)
+		 (setq dired-listing-switches "-alh")
 		 (diredp-toggle-find-file-reuse-dir 1)))
 (use-package emacs-async
   :config (setq dired-async-mode t))
