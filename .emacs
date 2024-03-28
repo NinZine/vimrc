@@ -37,7 +37,6 @@
  '(desktop-restore-eager t)
  '(desktop-save 'if-exists)
  '(desktop-save-mode t)
- '(dired-listing-switches "-alh")
  '(display-line-numbers 'visual)
  '(display-line-numbers-current-absolute t)
  '(display-line-numbers-type 'visual)
@@ -237,9 +236,12 @@
   :hook (after-init . xclip-mode))
 
 (use-package dired+
-  :config (progn (setq diredp-hide-details-initially-flag nil)
-		 (setq dired-listing-switches "-alh")
+  :init
+  (setq diredp-hide-details-initially-flag nil)
+  (setq diredp-hide-details-propagate-flag nil)
+  :config (progn (setq dired-listing-switches "-alh")
 		 (diredp-toggle-find-file-reuse-dir 1)))
+
 (use-package emacs-async
   :config (setq dired-async-mode t))
 
@@ -327,10 +329,6 @@
   :after helm
   :bind (("C-c o r" . helm-org-rifle)
 	 ("C-c o d" . helm-org-rifle-org-directory)))
-
-;; Docker
-(use-package docker-tramp
-  :if (or (executable-find "docker") (executable-find "podman")))
 
 ;; C/C++/ObjC
 (use-package ede
