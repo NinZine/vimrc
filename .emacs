@@ -335,13 +335,23 @@
   :hook ((c-mode-common . ede-minor-mode)))
 (use-package rmsbolt)
 
-(use-package lsp-mode :commands lsp
+(use-package lsp-mode :commands (lsp lsp-deferred)
   :after evil-collection
+  :init (progn
+	  ;; (setenv "LSP_USE_PLISTS" "true")
+	  (setq gc-cons-threshold 100000000)
+	  (setq read-process-output-max (* 1024 1024)) ;; 1mb
+	  )
   ;; Code completion, documentation etc.
   ;; for python: pip install 'python-lsp-server[all]'
-  :hook ((c-mode c++-mode objc-mode cuda-mode python-mode) . lsp)
-  :hook ((c-mode-common . hs-minor-mode))
+  :hook (((c-mode c++-mode objc-mode cuda-mode python-mode) . lsp-deferred)
+	 (c-mode-common . hs-minor-mode)
+	 (lsp-mode . lsp-enable-which-key-integration))
+  :bind-keymap ("C-c l" . lsp-command-map)
   :config (progn
+	    ;; (setq lsp-use-plists 't)
+	    (setq lsp-pylsp-configuration-sources ["flake8" "pylsp-mypy"])
+	    (setq lsp-pylsp-plugins-mypy-enabled 't)
 	    (evil-collection-define-key 'normal 'lsp-mode-map
 	      "K" 'lsp-describe-thing-at-point
 	      "gr" 'lsp-find-references)
