@@ -516,7 +516,8 @@
 (use-package magit)
 
 (use-package magit-todos
-  :hook ((magit-mode . magit-todos-mode)))
+  :hook ((magit-mode . magit-todos-mode))
+  :config (setq global-hl-todo-mode t))
 
 ;; Python
 ;; Fixes for not getting echo in run-python
