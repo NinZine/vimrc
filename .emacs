@@ -299,7 +299,6 @@
 	 ("TAB" . helm-execute-persistent-action)
 	 ("C-z" . helm-select-action))
   :config (progn
-	    (setq helm-mode t)
 	    (setq helm-completion-style 'emacs)
 	    (setq helm-minibuffer-history-key "M-p")
 	    (setq helm-move-to-line-cycle-in-source nil)
@@ -308,9 +307,16 @@
 	    (setq helm-autoresize-mode 1)
 	    (setq helm-autoresize-max-height 0)
 	    (setq helm-autoresize-min-height 20)
+	    (if (executable-find "ugrep")
+		(progn
+		  (setq
+		   grep-program "ugrep"
+		   helm-grep-default-command "ugrep --color=always -a -d recurse %e -n%cH -e %p %f")))
 
-	    (setq helm-grep-ag-command
-		  "rg --color=always --smart-case --search-zip --no-heading --line-number %s -- %s %s")))
+	    (if (executable-find "rg")
+		(setq helm-grep-ag-command
+		      "rg --color=always --smart-case --search-zip --no-heading --line-number %s -- %s %s"))
+	    (helm-mode 1)))
 
 (use-package projectile
   :after helm
