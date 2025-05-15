@@ -627,15 +627,14 @@
 (use-package ellama
   :straight (ellama :repo "s-kostyaev/ellama" :host github)
   :after llm
+  :bind ("C-c e" . ellama)
   :if (executable-find "ollama")
   :init
-  (setopt ellama-keymap-prefix "C-c e")
-  (setopt ellama-providers '(("zephyr" . (make-llm-ollama
-					  :chat-model "zephyr"
-					  :embedding-model "zephyr"))
-			     ("codellama" . (make-llm-ollama
-					     :chat-model "codellama:7b"
-					     :embedding-model "codellama:7b")))))
+  (require 'llm-gemini)
+  ;; (setopt ellama-keymap-prefix "C-c e")
+  (setopt ellama-providers
+	  '(("llama3" . (make-llm-ollama :chat-model "llama3" :embedding-model "llama3"))
+	    ("gemini" . (make-llm-gemini :chat-model "gemini-2.5-pro-preview-05-06" :key (plist-get (car (auth-source-search :host "llm.gemini")) :secret))))))
 
 
 ;; GUD key bindings
