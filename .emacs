@@ -583,6 +583,14 @@
   :hook ((c-mode-common . company-mode)
 	 (c-mode-common . (lambda () (setq-local company-backends '(company-c-headers company-yasnippet))))))
 
+(use-package company-lsp
+  :after lsp-mode
+  :config (push 'company-lsp company-backends))
+
+(use-package vue-mode
+  :mode "\\.vue\\'"
+  :hook (vue-mode . lsp))
+
 ;; REST
 (use-package restclient
   :ensure t)
