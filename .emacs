@@ -385,6 +385,7 @@
 (use-package yasnippet
   :after lsp-mode
   :config (yas-global-mode))
+(use-package yasnippet-snippets)
 
 (use-package masm-mode)
 
