@@ -30,6 +30,13 @@
  ;; If there is more than one, they won't work right.
  '(Man-notify-method 'aggressive)
  '(avy-style 'at-full)
+ '(company-backends
+   '(company-bbdb company-semantic company-cmake
+		  (company-capf :with company-yasnippet) company-clang
+		  company-files
+		  (company-dabbrev-code company-gtags company-etags
+					company-keywords)
+		  company-oddmuse company-dabbrev company-yasnippet))
  '(company-box-enable-icon nil)
  '(compilation-always-kill t)
  '(compilation-ask-about-save nil)
@@ -356,8 +363,9 @@
   :bind-keymap ("C-c l" . lsp-command-map)
   :config (progn
 	    ;; (setq lsp-use-plists 't)
-	    (setq lsp-pylsp-configuration-sources ["flake8" "pylsp-mypy"])
-	    (setq lsp-pylsp-plugins-mypy-enabled 't)
+	    (setq lsp-pylsp-configuration-sources ["flake8" "pylsp-mypy"]
+		  lsp-pylsp-plugins-mypy-enabled 't
+		  lsp-completion-provider :none) ;; no provider because we want capf + yasnippet
 	    (evil-collection-define-key 'normal 'lsp-mode-map
 	      "K" 'lsp-describe-thing-at-point
 	      "gr" 'lsp-find-references)
@@ -583,10 +591,6 @@
 	    
   :hook ((c-mode-common . company-mode)
 	 (c-mode-common . (lambda () (setq-local company-backends '(company-c-headers company-yasnippet))))))
-
-(use-package company-lsp
-  :after lsp-mode
-  :config (push 'company-lsp company-backends))
 
 (use-package vue-mode
   :mode "\\.vue\\'"
