@@ -357,7 +357,16 @@
 	  )
   ;; Code completion, documentation etc.
   ;; for python: pip install 'python-lsp-server[all]'
-  :hook (((c-mode c++-mode objc-mode cuda-mode python-mode) . lsp-deferred)
+  :hook (((c-mode
+	   c++-mode
+	   objc-mode
+	   cuda-mode
+	   python-mode
+	   tsx-ts-mode
+	   typescript-ts-mode
+	   typescript-mode
+	   js-ts-mode
+	   ) . lsp-deferred)
 	 (c-mode-common . hs-minor-mode)
 	 (lsp-mode . lsp-enable-which-key-integration))
   :bind-keymap ("C-c l" . lsp-command-map)
@@ -370,6 +379,10 @@
 	      "K" 'lsp-describe-thing-at-point
 	      "gr" 'lsp-find-references)
 	    (evil-collection-define-key 'normal 'python-mode-map
+	      "K" 'lsp-describe-thing-at-point
+	      "gr" 'lsp-find-references
+	      "gd" 'xref-find-definitions)
+	    (evil-collection-define-key 'normal 'typescript-mode-map
 	      "K" 'lsp-describe-thing-at-point
 	      "gr" 'lsp-find-references
 	      "gd" 'xref-find-definitions)
@@ -499,20 +512,8 @@
 	      (kbd "C-c t s") 'web-mode-tag-select)))
 
 ;; Typescript
+;; TODO: Replace with typescript-ts-mode, but grammar needs to be installed
 (use-package typescript-mode)
-(use-package tide
-  :mode (("\\.tsx?\\'" . typescript-mode)
-	 ("\\.jsx?\\'" . typescript-mode))
-  :config
-  (setq typescript-indent-level 2)
-  :after (typescript-mode flycheck company)
-  :hook ((typescript-mode . tide-setup)
-	 (typescript-mode . tide-hl-identifier-mode)
-	 (typescript-mode . company-mode)
-	 (typescript-mode . eldoc-mode)
-	 (typescript-mode . flycheck-mode)
-	 (typescript-mode . web-mode)
-	 (before-save . tide-format-before-save)))
 
 ;; Syntax checking
 (use-package flycheck
