@@ -647,6 +647,7 @@
   :if (executable-find "ollama")
   :init
   (require 'llm-gemini)
+  (require 'llm-ollama)
   ;; (setopt ellama-keymap-prefix "C-c e")
   (setopt ellama-providers
 	  '(("llama3" . (make-llm-ollama :chat-model "llama3" :embedding-model "llama3"))
