@@ -368,7 +368,8 @@
 	   js-ts-mode
 	   ) . lsp-deferred)
 	 (c-mode-common . hs-minor-mode)
-	 (lsp-mode . lsp-enable-which-key-integration))
+	 (lsp-mode . lsp-enable-which-key-integration)
+	 (lsp-mode . company-mode))
   :bind-keymap ("C-c l" . lsp-command-map)
   :config (progn
 	    ;; (setq lsp-use-plists 't)
