@@ -517,9 +517,72 @@
 	      (kbd "C-c t p") 'web-mode-tag-previous
 	      (kbd "C-c t s") 'web-mode-tag-select)))
 
-;; Typescript
-;; TODO: Replace with typescript-ts-mode, but grammar needs to be installed
-(use-package typescript-mode)
+(use-package treesit
+  :no-require t
+  :straight nil ;; treesit is built in
+  :mode (("\\.tsx\\'" . tsx-ts-mode)
+	 ("\\.js\\'"  . js-ts-mode)
+	 ("\\.ts\\'"  . typescript-ts-mode)
+	 ("\\.jsx\\'" . tsx-ts-mode)
+	 ("\\.json\\'" .  json-ts-mode)
+	 )
+  :preface
+  (defun os/setup-install-grammars ()
+    "Install Tree-sitter grammars if they are absent."
+    (interactive)
+    (dolist (grammar
+	     '(
+	       ;; (css . ("https://github.com/tree-sitter/tree-sitter-css" "v0.20.0"))
+	       ;; (bash "https://github.com/tree-sitter/tree-sitter-bash")
+	       ;; (html . ("https://github.com/tree-sitter/tree-sitter-html" "v0.20.1"))
+	       (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "master" "src"))
+	       (json . ("https://github.com/tree-sitter/tree-sitter-json"))
+	       ;; (python . ("https://github.com/tree-sitter/tree-sitter-python" "v0.20.4"))
+	       ;; (go "https://github.com/tree-sitter/tree-sitter-go" "v0.20.0")
+	       ;; (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+	       ;; (make "https://github.com/alemuller/tree-sitter-make")
+	       ;; (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+	       ;; (cmake "https://github.com/uyha/tree-sitter-cmake")
+	       ;; (c "https://github.com/tree-sitter/tree-sitter-c")
+	       ;; (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
+	       ;; (toml "https://github.com/tree-sitter/tree-sitter-toml")
+	       ;; (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+	       (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+	       (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+      (add-to-list 'treesit-language-source-alist grammar)
+      ;; Only install `grammar' if we don't already have it
+      ;; installed. However, if you want to *update* a grammar then
+      ;; this obviously prevents that from happening.
+      (unless (treesit-language-available-p (car grammar))
+	(treesit-install-language-grammar (car grammar)))))
+
+  ;; Optional, but recommended. Tree-sitter enabled major modes are
+  ;; distinct from their ordinary counterparts.
+  ;;
+  ;; You can remap major modes with `major-mode-remap-alist'. Note
+  ;; that this does *not* extend to hooks! Make sure you migrate them
+  ;; also
+  (dolist (mapping
+           '(
+  ;; 	     (python-mode . python-ts-mode)
+  ;;            (css-mode . css-ts-mode)
+             (typescript-mode . typescript-ts-mode)
+             (js-mode . js-ts-mode)
+             (js2-mode . js-ts-mode)
+  ;;            (c-mode . c-ts-mode)
+  ;;            (c++-mode . c++-ts-mode)
+  ;;            (c-or-c++-mode . c-or-c++-ts-mode)
+  ;;            (bash-mode . bash-ts-mode)
+  ;;            (css-mode . css-ts-mode)
+             (json-mode . json-ts-mode)
+             (js-json-mode . json-ts-mode)
+  ;;            (sh-mode . bash-ts-mode)
+  ;;            (sh-base-mode . bash-ts-mode)))
+	     ))
+    (add-to-list 'major-mode-remap-alist mapping))
+
+  :config
+  (os/setup-install-grammars))
 
 ;; Syntax checking
 (use-package flycheck
@@ -600,7 +663,11 @@
   :hook ((c-mode-common . company-mode)
 	 (c-mode-common . (lambda () (setq-local company-backends '(company-c-headers company-yasnippet))))))
 
+;; Typescript
+(use-package typescript-mode)
+;; Vue
 (use-package vue-mode
+  :after typescript-mode ;; vue-mode does not play nice with treesit
   :mode "\\.vue\\'"
   :hook (vue-mode . lsp))
 
