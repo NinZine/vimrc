@@ -467,7 +467,7 @@
 ;;   :ensure t)
 
 (use-package rainbow-delimiters
-  :init (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
+  :hook (prog-mode . rainbow-delimiters-mode))
 
 ;; Highlight parenthesis
 (show-paren-mode 1)
@@ -478,10 +478,10 @@
 
 ;; Balancing parathensis nicely with evil-mode
 (use-package lispyville
+  :hook ((emacs-lisp-mode . lispyville-mode)
+	 (lisp-mode . lispyville-mode)
+	 (lispy-mode . lispyville-mode))
   :config
-  (add-hook 'emacs-lisp-mode-hook #'lispyville-mode)
-  (add-hook 'lisp-mode-hook #'lispyville-mode)
-  (add-hook 'lispy-mode-hook #'lispyville-mode)
   (with-eval-after-load 'lispyville
     (lispyville-set-key-theme
      '(operators
