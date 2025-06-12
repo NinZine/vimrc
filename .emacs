@@ -376,7 +376,10 @@
 	    ;; (setq lsp-use-plists 't)
 	    (setq lsp-pylsp-configuration-sources ["flake8" "pylsp-mypy"]
 		  lsp-pylsp-plugins-mypy-enabled 't
-		  lsp-completion-provider :none) ;; no provider because we want capf + yasnippet
+		  lsp-completion-provider :none ;; no provider because we want capf + yasnippet
+		  lsp-volar-take-over-mode nil
+		  lsp-volar-hybrid-mode t
+		  )
 	    (evil-collection-define-key 'normal 'lsp-mode-map
 	      "K" 'lsp-describe-thing-at-point
 	      "gr" 'lsp-find-references)
