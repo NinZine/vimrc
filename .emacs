@@ -445,6 +445,7 @@
 
 ;; Common Lisp
 (use-package slime
+  :if (executable-find "sblc")
   :init (progn
 	  ;; (setq inferior-lisp-program "sbcl.exe")
 	  (setq slime-default-lisp "sbcl")
