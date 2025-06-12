@@ -369,7 +369,8 @@
 	   ) . lsp-deferred)
 	 (c-mode-common . hs-minor-mode)
 	 (lsp-mode . lsp-enable-which-key-integration)
-	 (lsp-mode . company-mode))
+	 (lsp-mode . company-mode)
+	 (lsp-mode . (lambda () (setq-local evil-lookup-func 'lsp-describe-thing-at-point))))
   :bind-keymap ("C-c l" . lsp-command-map)
   :config (progn
 	    ;; (setq lsp-use-plists 't)
