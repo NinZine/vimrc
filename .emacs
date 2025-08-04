@@ -725,6 +725,11 @@
 	  '(("llama3" . (make-llm-ollama :chat-model "llama3" :embedding-model "llama3"))
 	    ("gemini" . (make-llm-gemini :chat-model "gemini-2.5-pro-preview-05-06" :key (plist-get (car (auth-source-search :host "llm.gemini")) :secret))))))
 
+(use-package aidermacs
+  :bind (("C-c a" . aidermacs-transient-menu))
+  :custom
+  (aidermacs-default-chat-mode 'ask))
+
 
 ;; GUD key bindings
 (add-hook 'gud-mode-hook (lambda () (progn
