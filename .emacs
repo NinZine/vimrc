@@ -75,7 +75,6 @@
  '(org-publish-use-timestamps-flag nil)
  '(realgud-safe-mode nil)
  '(show-paren-mode t)
- '(undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree-history/")))
  '(warning-suppress-types '((use-package)))
  '(avy-goto-char-timer-face ((t (:inherit highlight :background "brightyellow" :foreground "black"))))
  '(avy-lead-face ((t (:background "color-93" :foreground "brightyellow" :weight bold))))
@@ -252,26 +251,19 @@
 (use-package emacs-async
   :config (setq dired-async-mode t))
 
-;; Vim mode
-(use-package undo-tree
-  :config (global-undo-tree-mode))
-
 (use-package avy)
 
 (use-package evil
-  :after undo-tree
-  :hook (evil-local-mode . turn-on-undo-tree-mode)
   :init (setq
 	 evil-mode-line-format nil
-	 evil-undo-system 'undo-tree
+	 evil-undo-system 'undo-redo
 	 evil-want-keybinding nil
 	 ;; Fix for TAB when not in GUI
 	 evil-want-C-i-jump nil
 	 evil-shift-width 2)
   :config (progn
 	    (define-key evil-normal-state-map (kbd "C-_") 'avy-goto-char)
-	    (evil-mode 1))
-  :hook (evil-local-mode . turn-on-undo-tree-mode))
+	    (evil-mode 1)))
 
 (use-package ace-window
   :after evil
