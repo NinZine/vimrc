@@ -184,6 +184,14 @@
   (let* ((file (dired-get-filename nil t)))
     (call-process "open" nil 0 nil file)))
 
+(defun compile-current-file ()
+  "Prompt for a compile command and append the current file."
+  (interactive)
+  (let ((file (buffer-file-name)))
+    (if file
+        (let ((command (read-string "Compile command: ")))
+          (compile (format "%s %s" command file)))
+      (message "No file is currently being edited."))))
 
 ;; Writing and organizing
 (use-package org
@@ -422,10 +430,15 @@
 
 ;; Go
 (use-package go-mode
-  :if (executable-find "go"))
+  :if (executable-find "go")
+  :hook (go-mode . eglot-ensure)
+  :config (evil-collection-define-key 'normal 'go-mode-map
+	    (kbd "C-c c") 'compile-current-file
+	    (kbd "C-c C-c") 'compile))
 
 (use-package company-go
-  :after go-mode)
+  :after go-mode
+  :hook (go-mode . company-mode))
 
 ;; Which Key
 (use-package which-key
