@@ -293,7 +293,11 @@
   :bind (("M-x" . helm-M-x)
 	 ("C-x b" . helm-mini)
 	 ("C-x C-f" . helm-find-files)
+	 ("C-c p" . project-find-file)
+	 ("TAB" . completion-at-point)
+	 ("C-c C-_" . helm-occur)
 	 :map helm-map
+
 	 ("TAB" . helm-execute-persistent-action)
 	 ("C-z" . helm-select-action))
   :config (progn
@@ -315,18 +319,6 @@
 		      "rg --color=always --smart-case --search-zip --no-heading --line-number %s -- %s %s"))
 	    (helm-mode 1)))
 
-(use-package projectile
-  :after helm
-  :init
-  (setq projectile-enable-caching t)
-  (setq projectile-indexing-method 'alien)
-  :config
-  (projectile-mode))
-
-(use-package helm-projectile
-  ;; For Windows, install MSYS and put in the path so 'find' is available
-  :after projectile
-  :bind (("C-c p" . helm-projectile-find-file)))
 
 (use-package helm-org-rifle
   :after helm
