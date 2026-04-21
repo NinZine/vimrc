@@ -245,8 +245,8 @@
 
 (use-package dired+
   :init
-  (setq diredp-hide-details-initially-flag nil)
-  (setq diredp-hide-details-propagate-flag nil)
+  (setq diredp-hide-details-initially-flag nil
+	diredp-hide-details-propagate-flag nil)
   :config (progn (setq dired-listing-switches "-alh")
 		 (diredp-toggle-find-file-reuse-dir 1)))
 
@@ -269,27 +269,24 @@
 
 (use-package ace-window
   :after evil
-  :init (progn
-	  (setq aw-leading-char-style 'path)
-	  (setq aw-keys '(?h ?t ?s ?d ?i ?a ?o ?e ?u)))
+  :init (setq aw-leading-char-style 'path
+	      aw-keys '(?h ?t ?s ?d ?i ?a ?o ?e ?u))
   :config (define-key evil-window-map "a" 'ace-window))
 
 ;; Theme
 (use-package doom-themes
-  :config (progn
-	    (setq-default line-spacing 0.25)
+  :config (setq-default line-spacing 0.25)
 	    (setq doom-themes-enable-bold nil
 		  doom-themes-enable-italic nil)
 	    (load-theme 'doom-monokai-pro t)
 
 	    ;; Transparent background
-	    (set-face-background 'default "undefined")))
+	    (set-face-background 'default "undefined"))
 
 (use-package w3m
   :config
-  (setq browse-url-browser-function 'w3m-browse-url)
-  (setq browse-url-secondary-browser-function 'browse-url-default-browser))
-
+  (setq browse-url-browser-function 'w3m-browse-url
+	browse-url-secondary-browser-function 'browse-url-default-browser))
 
 ;; Helm
 (use-package helm
@@ -300,19 +297,18 @@
 	 ("TAB" . helm-execute-persistent-action)
 	 ("C-z" . helm-select-action))
   :config (progn
-	    (setq helm-completion-style 'emacs)
-	    (setq helm-minibuffer-history-key "M-p")
-	    (setq helm-move-to-line-cycle-in-source nil)
-	    (setq helm-mode-fuzzy-match t)
-	    (setq helm-completion-in-region-fuzzy-match t)
-	    (setq helm-autoresize-mode 1)
-	    (setq helm-autoresize-max-height 0)
-	    (setq helm-autoresize-min-height 20)
+	    (setq helm-completion-style 'emacs
+		  helm-minibuffer-history-key "M-p"
+		  helm-move-to-line-cycle-in-source nil
+		  helm-mode-fuzzy-match t
+		  helm-completion-in-region-fuzzy-match t
+		  helm-autoresize-mode 1
+		  helm-autoresize-max-height 0
+		  helm-autoresize-min-height 20)
 	    (if (executable-find "ugrep")
-		(progn
-		  (setq
+		(setq
 		   grep-program "ugrep"
-		   helm-grep-default-command "ugrep --color=always -a -d recurse %e -n%cH -e %p %f")))
+		   helm-grep-default-command "ugrep --color=always -a -d recurse %e -n%cH -e %p %f"))
 
 	    (if (executable-find "rg")
 		(setq helm-grep-ag-command
@@ -403,13 +399,16 @@
 
 ;; When completion in some languages, parameters can be filled in by TAB
 (use-package yasnippet
-  :after lsp-mode
+  :defer t
   :config (yas-global-mode))
-(use-package yasnippet-snippets)
+(use-package yasnippet-snippets
+  :after yasnippet)
 
-(use-package masm-mode)
+(use-package masm-mode
+  :defer)
 
-(use-package nasm-mode)
+(use-package nasm-mode
+  :defer)
 
 (use-package kickasm-mode
   :straight (kickasm-mode :repo "mweidhagen/kickasm-mode" :host github)
@@ -436,9 +435,9 @@
 
 ;; Which Key
 (use-package which-key
-  :init
-  (setq which-key-separator " ")
-  (setq which-key-prefix-prefix "+")
+  :straight nil
+  :init (setq which-key-separator " "
+	      which-key-prefix-prefix "+")
   :config
   (which-key-mode))
 
@@ -591,12 +590,11 @@
 
 
 ;; Git plugin
-(use-package magit)
+(use-package magit
+  :straight (magit :repo "magit/magit" :host github))
 
 (use-package magit-todos
-  :hook ((magit-mode . magit-todos-mode))
-  :config (progn (setq global-hl-todo-mode t)
-		 (global-hl-todo-mode)))
+  :hook ((magit-mode . magit-todos-mode)))
 
 ;; Python
 ;; Fixes for not getting echo in run-python
