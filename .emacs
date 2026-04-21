@@ -31,13 +31,6 @@
  ;; If there is more than one, they won't work right.
  '(Man-notify-method 'aggressive)
  '(avy-style 'at-full)
- '(company-backends
-   '(company-bbdb company-semantic company-cmake
-		  (company-capf :with company-yasnippet) company-clang
-		  company-files
-		  (company-dabbrev-code company-gtags company-etags
-					company-keywords)
-		  company-oddmuse company-dabbrev company-yasnippet))
  '(company-box-enable-icon nil)
  '(compilation-always-kill t)
  '(compilation-ask-about-save nil)
@@ -662,12 +655,32 @@
 (use-package company
   :straight (company-mode :repo "company-mode/company-mode" :host github)
   :bind (:map company-active-map
-	 ("C-d" . company-show-doc-buffer))
-  :config (progn (setq company-selection-default nil)
-		 (setq company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)))
+	      ("TAB" . completion-at-point)
+	      ("C-d" . company-show-doc-buffer)
+	      )
+  :config (setq company-selection-default nil
+		company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)
+		company-backends '(
+				   ;; company-bbdb
+				   ;; company-semantic
+				   ;; company-cmake
+				   (company-capf :with company-yasnippet)
+				   ;; company-clang
+			       company-files
+			       company-dabbrev-code
+			       ;; (company-dabbrev-code company-gtags company-etags
+			       ;; 			     company-keywords)
+			       ;; company-oddmuse company-dabbrev company-yasnippet
+			       )
+
+		)
 	    
-  :hook ((c-mode-common . company-mode)
-	 (c-mode-common . (lambda () (setq-local company-backends '(company-c-headers company-yasnippet))))))
+  :hook ((prog-mode . company-mode)
+	 (c-mode-common . (lambda () (setq-local company-backends '(company-c-headers company-etags company-yasnippet))))
+	 ))
+
+(use-package company-c-headers
+  :after company)
 
 ;; Typescript
 (use-package typescript-mode)
