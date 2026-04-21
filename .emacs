@@ -794,4 +794,6 @@
 ;; Don't whine about a process running in the buffer, just kill it
 (setq kill-buffer-query-functions nil)
 
+(put 'downcase-region 'disabled nil)
+(global-hl-todo-mode)
 ;;; .emacs ends here
