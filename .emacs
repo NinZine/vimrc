@@ -325,9 +325,14 @@
   :bind (("C-c o r" . helm-org-rifle)
 	 ("C-c o d" . helm-org-rifle-org-directory)))
 
-;; C/C++/ObjC
-(use-package ede
-  :hook ((c-mode-common . ede-minor-mode)))
+(use-package shackle
+  :hook (after-init . shackle-mode)
+  :config
+  (setq shackle-default-size 0.4
+	shackle-rules
+	'(("\\*eldoc.*" :align t :select t :regexp t)
+	  ("\\*compilation*" :align t :select t :regexp t))))
+
 (use-package rmsbolt)
 
 (use-package lsp-mode :commands (lsp lsp-deferred)
