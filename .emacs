@@ -1,6 +1,7 @@
 
 ;;; Code:
 (setq package-enable-at-startup nil)
+(defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; Minimal UI
 (when (not (eq (window-system) nil))
