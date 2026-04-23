@@ -629,23 +629,20 @@
 ;; Folding
 (add-hook 'python-mode-hook 'hs-minor-mode)
 
+(use-package reformatter
+  :hook (python-mode . ruff-format-on-save-mode)
+        (python-ts-mode . ruff-format-on-save-mode)
+  :config
+  (reformatter-define ruff-format
+    :program "ruff"
+    :args `("format" "--stdin-filename" ,buffer-file-name "-")))
+
 (use-package pydoc
   :straight (pydoc :repo "statmobile/pydoc" :host github))
 
-(use-package ein)
-
 ;; pyvenv-create to create a new env, pyvenv-workon and venv-work to use it
 (use-package pyvenv
-  :init (setenv "WORKON_HOME" "~/.pyenv/versions"))
-
-;; For Windows, pip install pyreadline.
-(setq python-shell-interpreter "python")
-;;'(python-shell-interpreter-args "console --simple-prompt")
-;;'(python-shell-prompt-detect-failure-warning nil)
-
-(use-package blacken
-  :straight (blacken :repo "pythonic-emacs/blacken" :host github)
-  :hook ((python-mode . blacken-mode)))
+  :init (setenv "WORKON_HOME" nil))
 
 (use-package company
   :straight (company-mode :repo "company-mode/company-mode" :host github)
