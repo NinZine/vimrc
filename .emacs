@@ -335,64 +335,88 @@
 
 (use-package rmsbolt)
 
-(use-package lsp-mode :commands (lsp lsp-deferred)
-  :after evil-collection
-  :init (progn
-	  ;; (setenv "LSP_USE_PLISTS" "true")
-	  (setq gc-cons-threshold 100000000)
-	  (setq read-process-output-max (* 1024 1024)) ;; 1mb
-	  )
-  ;; Code completion, documentation etc.
-  ;; for python: pip install 'python-lsp-server[all]'
-  :hook (((c-mode
-	   c++-mode
-	   objc-mode
-	   cuda-mode
-	   python-mode
-	   tsx-ts-mode
-	   typescript-ts-mode
-	   typescript-mode
-	   js-ts-mode
-	   ) . lsp-deferred)
-	 (c-mode-common . hs-minor-mode)
-	 (lsp-mode . lsp-enable-which-key-integration)
-	 (lsp-mode . company-mode)
-	 (lsp-mode . (lambda () (setq-local evil-lookup-func 'lsp-describe-thing-at-point))))
-  :bind-keymap ("C-c l" . lsp-command-map)
-  :config (progn
-	    ;; (setq lsp-use-plists 't)
-	    (setq lsp-pylsp-configuration-sources ["flake8" "pylsp-mypy"]
-		  lsp-pylsp-plugins-mypy-enabled 't
-		  lsp-completion-provider :none ;; no provider because we want capf + yasnippet
-		  lsp-volar-take-over-mode nil
-		  lsp-volar-hybrid-mode t
-		  )
-	    (evil-collection-define-key 'normal 'lsp-mode-map
-	      "K" 'lsp-describe-thing-at-point
-	      "gr" 'lsp-find-references)
-	    (evil-collection-define-key 'normal 'python-mode-map
-	      "K" 'lsp-describe-thing-at-point
-	      "gr" 'lsp-find-references
-	      "gd" 'xref-find-definitions)
-	    (evil-collection-define-key 'normal 'typescript-mode-map
-	      "K" 'lsp-describe-thing-at-point
-	      "gr" 'lsp-find-references
-	      "gd" 'xref-find-definitions)
-	    (evil-collection-define-key 'normal 'c-mode-base-map
-	      "K" 'lsp-describe-thing-at-point
-	      "gr" 'lsp-find-references
-	      "zc" 'hs-hide-level)))
 
-(use-package dap-mode :commands (dap-python)
-  :straight (dap-mode :repo "emacs-lsp/dap-mode" :host github)
-  :after lsp-mode
-  :hook (dap-session-created . (lambda () (dap-hydra)))
-  :config
-  (require 'dap-python) ;; FIXME: This should be a hook to python-mode
-  (setq dap-auto-configure-features '(sessions locals controls tooltip))
-  (setq dap-python-debugger 'debugpy))
+(defvar my-lsp-backend 'eglot)
 
-(use-package helm-lsp)
+(when (eq my-lsp-backend 'eglot)
+  (use-package eglot
+    :defer t
+    :straight nil
+    :hook (((c-mode
+	     c++-mode
+	     objc-mode
+	     cuda-mode
+	     python-mode
+	     tsx-ts-mode
+	     typescript-ts-mode
+	     typescript-mode
+	     js-ts-mode
+	     ) . eglot-ensure))
+    :custom
+    (eglot-autoshutdown t)
+    (eglot-events-buffer-size 0)
+    (eglot-extend-to-xref t)
+    (eglot-ignored-server-capabilities
+     '(:inlayHintProvider
+       ;;    ;; :hoverProvider
+       ;;    :documentHighlightProvider
+       ;;    ;; :documentFormattingProvider
+       ;;    ;; :documentRangeFormattingProvider
+       ;;    ;; :documentOnTypeFormattingProvider
+       ;;    :colorProvider
+       ;;    :foldingRangeProvider
+       ))
+    (eglot-stay-out-of '(yasnippet))))
+
+(when (eq my-lsp-backend 'lsp-mode)
+  (use-package lsp-mode :commands (lsp lsp-deferred)
+    :after evil-collection
+    :init (progn
+	    ;; (setenv "LSP_USE_PLISTS" "true")
+	    (setq gc-cons-threshold 100000000)
+	    (setq read-process-output-max (* 1024 1024)) ;; 1mb
+	    )
+    ;; Code completion, documentation etc.
+    ;; for python: pip install 'python-lsp-server[all]'
+    :hook (((python-mode
+	     tsx-ts-mode
+	     typescript-ts-mode
+	     typescript-mode
+	     js-ts-mode
+	     ) . lsp-deferred)
+	   (lsp-mode . lsp-enable-which-key-integration)
+	   ;; (lsp-mode . company-mode)
+	   (lsp-mode . (lambda () (setq-local evil-lookup-func 'lsp-describe-thing-at-point))))
+    :bind-keymap ("C-c l" . lsp-command-map)
+    :config (progn
+	      ;; (setq lsp-use-plists 't)
+	      (setq lsp-pylsp-configuration-sources ["flake8" "pylsp-mypy"]
+		    lsp-pylsp-plugins-mypy-enabled 't
+		    lsp-completion-provider :none ;; no provider because we want capf + yasnippet
+		    lsp-volar-take-over-mode nil
+		    lsp-volar-hybrid-mode t
+		    )
+	      (evil-collection-define-key 'normal 'lsp-mode-map
+		"K" 'lsp-describe-thing-at-point
+		"gr" 'lsp-find-references)
+	      (evil-collection-define-key 'normal 'python-mode-map
+		"K" 'lsp-describe-thing-at-point
+		"gr" 'lsp-find-references
+		"gd" 'xref-find-definitions)
+	      (evil-collection-define-key 'normal 'typescript-ts-mode-map
+		"K" 'lsp-describe-thing-at-point
+		"gr" 'lsp-find-references
+		"gd" 'xref-find-definitions)))
+
+  (use-package dap-mode :commands (dap-python)
+    :straight (dap-mode :repo "emacs-lsp/dap-mode" :host github)
+    :defer t
+    :hook (dap-session-created . (lambda () (dap-hydra)))
+    :config
+    (require 'dap-python) ;; FIXME: This should be a hook to python-mode
+    (setq dap-auto-configure-features '(sessions locals controls tooltip)
+	  dap-python-debugger 'debugpy)))
+
 
 ;; When completion in some languages, parameters can be filled in by TAB
 (use-package yasnippet
