@@ -418,9 +418,45 @@
 	  dap-python-debugger 'debugpy)))
 
 ;; Debug everything with dape
+(use-package hydra)
 (use-package dape
-  :config (setq
-	   dape-buffer-window-arrangement 'right))
+  :bind ("C-c d" . hydra-dape/body)
+  :config
+  (setq dape-buffer-window-arrangement 'right)
+  (defhydra hydra-dape (:color pink :hint nil :foreign-keys warn)
+    "
+^Stepping^          ^Breakpoints^       ^Debug^             ^Expression^
+^^^^^^^^-----------------------------------------------------------------
+_c_: Continue       _b_: Toggle
+_n_: Next           _B_: Expression     _d_: Dape           _e_: Eval
+_i_: Step In        _c_: Continue       _r_: Restart        _S_: Status/Info
+_o_: Step Out       _D_: Clear all      _q_: Quit/Stop      _m_: Read Memory
+_p_: Pause          _l_: Log            _k_: Kill           _w_: Watch DWIM
+"
+    ;; Stepping
+    ("n" dape-next)
+    ("i" dape-step-in)
+    ("o" dape-step-out)
+    ("c" dape-continue)
+    ("p" dape-pause)
+    ;; Breakpoints
+    ("b" dape-breakpoint-toggle)
+    ("B" dape-breakpoint-expression)
+    ("D" dape-breakpoint-remove-all)
+    ("l" dape-breakpoint-log)
+    ;; Debug Management
+    ("d" dape)
+    ("r" dape-restart)
+    ("q" dape-quit :color blue)
+    ("k" dape-kill :color blue)
+    ("S" dape-info) ;; Opens the info dashboard
+    ;; Expressions & Memory
+    ("e" dape-evaluate-expression)
+    ("w" dape-watch-dwim)
+    ("m" dape-read-memory)
+    ;; Navigation/Exit
+    ("g" nil "back" :color blue)
+    ("RET" nil "done" :color blue)))
 
 ;; When completion in some languages, parameters can be filled in by TAB
 (use-package yasnippet
