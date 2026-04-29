@@ -417,6 +417,10 @@
     (setq dap-auto-configure-features '(sessions locals controls tooltip)
 	  dap-python-debugger 'debugpy)))
 
+;; Debug everything with dape
+(use-package dape
+  :config (setq
+	   dape-buffer-window-arrangement 'right))
 
 ;; When completion in some languages, parameters can be filled in by TAB
 (use-package yasnippet
@@ -778,6 +782,8 @@
   (define-key gud-minor-mode-map (kbd "S-<f8>") #'gud-finish))))
 
 (define-key global-map (kbd "C-c /") 'comment-line)
+
+(winner-mode t)
 
 (defvar default-mode-line-foreground (face-foreground 'mode-line))
 (defvar default-mode-line-background (face-background 'mode-line))
