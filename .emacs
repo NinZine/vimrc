@@ -427,11 +427,11 @@
     "
 ^Stepping^          ^Breakpoints^       ^Debug^             ^Expression^
 ^^^^^^^^-----------------------------------------------------------------
-_c_: Continue       _b_: Toggle
+_c_: Continue       _b_: Toggle         _p_: Pause          _S_: Stack select
 _n_: Next           _B_: Expression     _d_: Dape           _e_: Eval
-_i_: Step In        _c_: Continue       _r_: Restart        _S_: Status/Info
+_i_: Step In        _c_: Continue       _r_: Restart        _I_: Info/Status
 _o_: Step Out       _D_: Clear all      _q_: Quit/Stop      _m_: Read Memory
-_p_: Pause          _l_: Log            _k_: Kill           _w_: Watch DWIM
+_p_: Pause          _l_: Log            _K_: Kill           _w_: Watch DWIM
 "
     ;; Stepping
     ("n" dape-next)
@@ -448,9 +448,10 @@ _p_: Pause          _l_: Log            _k_: Kill           _w_: Watch DWIM
     ("d" dape)
     ("r" dape-restart)
     ("q" dape-quit :color blue)
-    ("k" dape-kill :color blue)
-    ("S" dape-info) ;; Opens the info dashboard
+    ("K" dape-kill :color blue)
+    ("I" dape-info) ;; Opens the info dashboard
     ;; Expressions & Memory
+    ("S" dape-select-stack)
     ("e" dape-evaluate-expression)
     ("w" dape-watch-dwim)
     ("m" dape-read-memory)
