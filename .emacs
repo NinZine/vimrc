@@ -283,13 +283,49 @@
 ;; Theme
 (use-package doom-themes
   :demand t
-  :config (setq-default line-spacing 0.25)
-	    (setq doom-themes-enable-bold nil
-		  doom-themes-enable-italic nil)
-	    (load-theme 'doom-monokai-pro t)
+  :config
+  (setq-default line-spacing 0.25)
+  (setq doom-themes-enable-bold nil
+	doom-themes-enable-italic nil)
 
-	    ;; Transparent background
-	    (set-face-background 'default "undefined"))
+  (defun my/set-transparent-background (&rest _args)
+    "Make the default face background transparent."
+    ;; Transparent background
+    ;; (set-face-attribute 'default nil :background "unspecified-bg")
+    (set-face-background 'default "undefined"))
+
+  (defun my/load-theme (theme)
+    "Load THEME after disabling currently enabled themes."
+    ;; (mapc #'disable-theme custom-enabled-themes)
+    (setq my/current-time-theme theme)
+    (load-theme theme t)
+    (my/set-transparent-background))
+
+  (defun my/load-time-theme ()
+      "Load a light theme from 08:00 through 17:59, otherwise a dark theme"
+    (let* ((hour (string-to-number (format-time-string "%H")))
+	   (theme (if (and (>= hour 8) (<= hour 18))
+		      'doom-solarized-light
+		    'doom-monokai-pro)))
+      ;; Avoid reloading the theme every time the timer runs.
+      (unless (eq theme my/current-time-theme)
+	(my/load-theme theme))))
+
+  ;; Apply transparency after themes loaded through load-theme.
+  (advice-add 'load-theme :after #'my/set-transparent-background)
+  ;; Reapply transparency after every theme change.
+  (add-hook 'after-load-theme-hook #'my/set-transparent-background)
+
+  ;; Keep track of the currently selected time-based theme.
+  (defvar my/current-time-theme nil)
+  ;; (my/load-theme 'doom-solarized-light)
+
+  ;; Select the correct theme immediately.
+  (my/load-time-theme)
+  (my/set-transparent-background)
+
+  ;; Check once per minute so the theme changes at 08:00 and 18:00.
+  (run-at-time nil 60 #'my/load-time-theme))
 
 (use-package w3m
   :config
