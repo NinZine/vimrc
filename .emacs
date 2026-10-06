@@ -338,8 +338,9 @@
   :config
   (setq shackle-default-size 0.4
 	shackle-rules
-	'(("\\*eldoc.*" :align t :select t :regexp t)
-	  ("\\*compilation*" :align t :select t :regexp t))))
+	'(("\\` *which-key\\*\\'" :regexp t :align bottom :ratio 0.3)
+	  ("\\*eldoc.*" :align t :select t :regexp t)
+	  ("\\*compilation*" :align right :select t :regexp t))))
 
 (use-package rmsbolt)
 
@@ -507,6 +508,8 @@ _p_: Pause          _l_: Log            _K_: Kill           _w_: Watch DWIM
 (use-package which-key
   :straight nil
   :init (setq which-key-separator " "
+	      which-key-side-window-location 'bottom
+	      which-key-popup-type 'minibuffer
 	      which-key-prefix-prefix "+")
   :config
   (which-key-mode))
