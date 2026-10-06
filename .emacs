@@ -288,6 +288,8 @@
   (setq browse-url-browser-function 'w3m-browse-url
 	browse-url-secondary-browser-function 'browse-url-default-browser))
 
+(use-package fd-dired)
+
 ;; Helm
 (use-package helm
   :bind (("M-x" . helm-M-x)
@@ -308,11 +310,17 @@
 		  helm-completion-in-region-fuzzy-match t
 		  helm-autoresize-mode 1
 		  helm-autoresize-max-height 0
-		  helm-autoresize-min-height 20)
+		  helm-autoresize-min-height 20
+		  helm-find-no-errors t)
+
+	    ;; Tell Helm to use 'fd' (or 'fdfind' depending on your OS binary)
+	    (if (or (executable-find "fdfind")
+		    (executable-find "fd"))
+		(setq helm-find-base-command "fdfind --color=never --type f %s %s")
+	      (setq helm-find-base-command "fd --color=never --type f %s %s"))
 	    (if (executable-find "ugrep")
-		(setq
-		   grep-program "ugrep"
-		   helm-grep-default-command "ugrep --color=always -a -d recurse %e -n%cH -e %p %f"))
+		(setq grep-program "ugrep"
+		      helm-grep-default-command "ugrep --color=always -a -d recurse %e -n%cH -e %p %f"))
 
 	    (if (executable-find "rg")
 		(setq helm-grep-ag-command
