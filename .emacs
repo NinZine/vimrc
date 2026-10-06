@@ -1,7 +1,13 @@
+;; -*- lexical-binding: t; -*-
 
 ;;; Code:
 (setq package-enable-at-startup nil)
 (defalias 'yes-or-no-p 'y-or-n-p)
+
+;; User settings
+(let ((local-file (expand-file-name "local.el" user-emacs-directory)))
+  (when (file-exists-p local-file)
+        (load-file local-file)))
 
 ;; Minimal UI
 (when (not (eq (window-system) nil))
@@ -58,15 +64,6 @@
  '(kickasm-scoping-indent 2)
  '(kickasm-scoping-label-indent 0)
  '(magit-todos-exclude-globs '("*.map" ".git/"))
- '(org-capture-templates
-   (quote
-    (("l" "Log entry" plain
-      (file+olp+datetree "z:/Org/log.org")))))
- '(org-export-backends (quote (ascii html icalendar latex md odt)))
- '(org-journal-dir "z:/Journal/")
- '(org-agenda-files (list org-directory))
- '(org-journal-file-format "%Y/%Y-%m-%d.org")
- '(org-publish-use-timestamps-flag nil)
  '(realgud-safe-mode nil)
  '(show-paren-mode t)
  '(warning-suppress-types '((use-package)))
@@ -134,8 +131,14 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 (straight-use-package 'use-package)
-(setq straight-use-package-by-default t)
+(setq straight-use-package-by-default t
+      use-package-always-defer t)
 
+
+(use-package emacs
+  :init
+  (with-eval-after-load 'ffap (ffap-bindings))
+  (delete-selection-mode 1))
 
 ;; Helper for compilation. Close the compilation window if
 ;; there was no error at all. (emacs wiki)
@@ -189,21 +192,21 @@
 
 ;; Writing and organizing
 (use-package org
-  ;; :quelpa ((org :url "https://git.savannah.gnu.org/git/emacs/org-mode.git"
-  ;; 		:fetcher git
-  ;; 		:tag "release_9.6"
-  ;; 		:files ("lisp/*.el" "doc/dir")))
-  ;; :ensure t
   :hook ((org-mode . (lambda () (setq fill-column 80)))
 	 (org-mode . auto-fill-mode)
 	 (org-mode . olivetti-mode))
-  :config (progn (evil-collection-define-key 'normal 'org-mode-map
-		   (kbd "C-c t") 'org-todo)
-		 (global-set-key (kbd "C-c o c") 'org-capture)))
-
+  :bind (("C-c o c" . org-capture))
+  :config (progn
+	    (setq org-agenda-files (list org-directory)
+		  org-capture-templates '(("l" "Log entry" plain (file+olp+datetree my-org-log)))
+		  org-directory my-org-directory
+		  org-export-backends '(ascii html icalendar latex md odt)
+		  org-publish-use-timestamps-flag nil)
+	    (evil-collection-define-key 'normal 'org-mode-map (kbd "C-c t") 'org-todo)))
 
 ;; Clipboard
 (use-package exec-path-from-shell
+  :demand t
   :init
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
@@ -236,22 +239,26 @@
 
 
 (use-package clipetty
+  :demand t
   :if (and (not (eq system-type 'cygwin)) (not (eq system-type 'gnu/linux)) (eq (window-system) nil))
   :hook (after-init . global-clipetty-mode))
 
 (use-package xclip
+  :demand t
   :if (and (eq system-type 'gnu/linux) (eq (window-system) nil))
   :hook (after-init . xclip-mode))
 
 (use-package dired+
-  :init
-  (setq diredp-hide-details-initially-flag nil
-	diredp-hide-details-propagate-flag nil)
+  :after evil-collection
+  :init (setq diredp-hide-details-initially-flag nil
+	      diredp-hide-details-propagate-flag nil)
   :config (progn (setq dired-listing-switches "-alh")
-		 (diredp-toggle-find-file-reuse-dir 1)))
+		 (diredp-toggle-find-file-reuse-dir 1))
+		 (evil-collection-define-key 'normal 'dired-mode-map (kbd "C-o") 'dired-open-file))
 
-(use-package emacs-async
-  :config (setq dired-async-mode t))
+(use-package async
+  :straight t
+  :init (dired-async-mode 1))
 
 (use-package avy)
 
@@ -275,6 +282,7 @@
 
 ;; Theme
 (use-package doom-themes
+  :demand t
   :config (setq-default line-spacing 0.25)
 	    (setq doom-themes-enable-bold nil
 		  doom-themes-enable-italic nil)
@@ -302,8 +310,8 @@
 
 	 ("TAB" . helm-execute-persistent-action)
 	 ("C-z" . helm-select-action))
-  :config (progn
-	    (setq helm-completion-style 'emacs
+  :init
+  :config (setq helm-completion-style 'emacs
 		  helm-minibuffer-history-key "M-p"
 		  helm-move-to-line-cycle-in-source nil
 		  helm-mode-fuzzy-match t
@@ -318,6 +326,7 @@
 		    (executable-find "fd"))
 		(setq helm-find-base-command "fdfind --color=never --type f %s %s")
 	      (setq helm-find-base-command "fd --color=never --type f %s %s"))
+
 	    (if (executable-find "ugrep")
 		(setq grep-program "ugrep"
 		      helm-grep-default-command "ugrep --color=always -a -d recurse %e -n%cH -e %p %f"))
@@ -325,7 +334,7 @@
 	    (if (executable-find "rg")
 		(setq helm-grep-ag-command
 		      "rg --color=always --smart-case --search-zip --no-heading --line-number %s -- %s %s"))
-	    (helm-mode 1)))
+	    (helm-mode 1))
 
 
 (use-package helm-org-rifle
@@ -344,12 +353,9 @@
 
 (use-package rmsbolt)
 
-
 (defvar my-lsp-backend 'eglot)
-
 (when (eq my-lsp-backend 'eglot)
   (use-package eglot
-    :defer t
     :straight nil
     :hook (((c-mode
 	     c++-mode
@@ -470,16 +476,13 @@ _p_: Pause          _l_: Log            _K_: Kill           _w_: Watch DWIM
 
 ;; When completion in some languages, parameters can be filled in by TAB
 (use-package yasnippet
-  :defer t
   :config (yas-global-mode))
 (use-package yasnippet-snippets
   :after yasnippet)
 
-(use-package masm-mode
-  :defer)
+(use-package masm-mode)
 
-(use-package nasm-mode
-  :defer)
+(use-package nasm-mode)
 
 (use-package kickasm-mode
   :straight (kickasm-mode :repo "mweidhagen/kickasm-mode" :host github)
@@ -507,6 +510,7 @@ _p_: Pause          _l_: Log            _K_: Kill           _w_: Watch DWIM
 ;; Which Key
 (use-package which-key
   :straight nil
+  :demand t
   :init (setq which-key-separator " "
 	      which-key-side-window-location 'bottom
 	      which-key-popup-type 'minibuffer
@@ -528,10 +532,10 @@ _p_: Pause          _l_: Log            _K_: Kill           _w_: Watch DWIM
 ;; Evil collection
 (use-package evil-collection
   :after evil
+  :demand t
   :init (setq evil-collection-setup-minibuffer t)
-  :config (progn (evil-collection-init)
-		 (evil-collection-define-key 'normal 'dired-mode-map
-	      (kbd "C-o") 'dired-open-file)))
+  :config
+  (evil-collection-init))
 
 ;; CIDER for Clojure(Script)
 ;; (use-package cider
@@ -549,17 +553,21 @@ _p_: Pause          _l_: Log            _K_: Kill           _w_: Watch DWIM
 
 ;; Balancing parathensis nicely with evil-mode
 (use-package lispyville
+  :straight t
   :hook ((emacs-lisp-mode . lispyville-mode)
-	 (lisp-mode . lispyville-mode)
-	 (lispy-mode . lispyville-mode))
+	 (lisp-mode . lispyville-mode))
+  :init
+  ;; Safely hook into lispy-mode only AFTER lispy itself decides to load
+  (with-eval-after-load 'lispy
+    (add-hook 'lispy-mode-hook #'lispyville-mode))
   :config
-  (with-eval-after-load 'lispyville
-    (lispyville-set-key-theme
-     '(operators
-       c-w
-       (escape insert)
-       (additional-movement normal visual motion)
-       slurp/barf-lispy))))
+  ;; Flattened config (removed redundant with-eval-after-load)
+  (lispyville-set-key-theme
+   '(operators
+     c-w
+     (escape insert)
+     (additional-movement normal visual motion)
+          slurp/barf-lispy)))
 
 
 ;; HTML development
@@ -663,11 +671,21 @@ _p_: Pause          _l_: Log            _K_: Kill           _w_: Watch DWIM
 
 
 ;; Git plugin
+(use-package transient
+  :straight (:host github :repo "magit/transient"))
+
 (use-package magit
   :straight (magit :repo "magit/magit" :host github))
 
 (use-package magit-todos
   :hook ((magit-mode . magit-todos-mode)))
+
+(use-package project
+  :straight nil
+  :demand t
+  :config
+  ;; The standard, intended way to add options to the C-x p p menu
+    (add-to-list 'project-switch-commands '(magit-project-status "Magit" ?m) t))
 
 ;; Python
 ;; Fixes for not getting echo in run-python
@@ -752,6 +770,7 @@ _p_: Pause          _l_: Log            _K_: Kill           _w_: Watch DWIM
 
 ;; Typescript
 (use-package typescript-mode)
+
 ;; Vue
 (use-package vue-mode
   :after typescript-mode ;; vue-mode does not play nice with treesit
@@ -785,7 +804,11 @@ _p_: Pause          _l_: Log            _K_: Kill           _w_: Watch DWIM
 
 (use-package org-journal
   :after org
-  :config (global-set-key (kbd "C-c o j") 'org-journal-new-entry))
+  :bind (("C-c o j" . org-journal-new-entry))
+  :config (setq
+	   org-journal-dir my-org-journals
+	   org-journal-file-format "%Y/%Y-%m-%d.org"
+	   org-journal-file-type 'yearly))
 
 (use-package markdown-mode
   :hook ((markdown-mode . auto-fill-mode)
