@@ -391,18 +391,26 @@
 
 (defvar my-lsp-backend 'eglot)
 (when (eq my-lsp-backend 'eglot)
+  (defun my/python-eglot-ensure ()
+    (if (file-remote-p default-directory)
+	(eglot-ensure)
+      (when-let* ((root (locate-dominating-file default-directory ".venv"))
+		  (venv (expand-file-name ".venv" root)))
+	(pyvenv-activate venv))
+      (eglot-ensure)))
   (use-package eglot
     :straight nil
     :hook (((c-mode
 	     c++-mode
 	     objc-mode
 	     cuda-mode
-	     python-mode
 	     tsx-ts-mode
 	     typescript-ts-mode
 	     typescript-mode
 	     js-ts-mode
-	     ) . eglot-ensure))
+	     ) . eglot-ensure)
+
+	   (python-mode . my/python-eglot-ensure))
     :custom
     (eglot-autoshutdown t)
     (eglot-events-buffer-size 0)
