@@ -415,6 +415,9 @@
 
 	   (python-mode . my/python-eglot-ensure))
     :custom
+    (eglot-server-programs
+     (append '(((python-mode python-ts-mode) . ("ty" "server"))
+	     eglot-server-programs))
     (eglot-autoshutdown t)
     (eglot-events-buffer-size 0)
     (eglot-extend-to-xref t)
