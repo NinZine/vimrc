@@ -260,9 +260,11 @@
   :straight t
   :init (dired-async-mode 1))
 
-(use-package avy)
+(use-package avy
+  :demand t)
 
 (use-package evil
+  :demand t
   :init (setq
 	 evil-mode-line-format nil
 	 evil-undo-system 'undo-redo
@@ -276,6 +278,7 @@
 
 (use-package ace-window
   :after evil
+  :demand t
   :init (setq aw-leading-char-style 'path
 	      aw-keys '(?h ?t ?s ?d ?i ?a ?o ?e ?u))
   :config (define-key evil-window-map "a" 'ace-window))
